@@ -3,6 +3,7 @@ package com.ahr.gigihfinalproject.presentation.main
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
@@ -41,7 +42,7 @@ fun MainScreen() {
         sheetContent = { MainSheetContent() },
         sheetShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         sheetBackgroundColor = MaterialTheme.colorScheme.surface,
-        sheetPeekHeight = 72.dp
+        sheetPeekHeight = 116.dp
     ) {
         MainContent(
             modifier = Modifier.fillMaxSize(),
@@ -78,7 +79,8 @@ fun MainContent(
         MainHeaderSection(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 24.dp)
+                .statusBarsPadding()
+                .padding(top = 16.dp)
                 .padding(horizontal = 16.dp),
             state = state,
             onStateChanged = onStateChanged,
