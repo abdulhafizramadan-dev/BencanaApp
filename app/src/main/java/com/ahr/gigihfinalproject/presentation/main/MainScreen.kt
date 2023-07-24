@@ -1,11 +1,12 @@
 package com.ahr.gigihfinalproject.presentation.main
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -17,6 +18,7 @@ import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,21 +35,16 @@ import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.util.emptyString
 import kotlinx.coroutines.launch
 
-private const val TAG = "MainScreen"
-
 @OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen() {
 
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
+    val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = bottomSheetState
     )
-
-    Log.d(TAG, "MainScreen: Current State = ${scaffoldState.bottomSheetState.currentValue}")
-    Log.d(TAG, "MainScreen: Target State = ${scaffoldState.bottomSheetState.targetValue}")
 
     val isExpanded = remember(key1 = scaffoldState.bottomSheetState.currentValue) {
         scaffoldState.bottomSheetState.currentValue == BottomSheetValue.Expanded
@@ -63,23 +60,24 @@ fun MainScreen() {
         } else emptyList()
     }
 
-    val disasterItems = listOf("Banjir", "Gempa Bumi", "Kebakaran", "Kabut", "Angin Topan", "Gunung Meletus")
+    val disasterItems =
+        listOf("Banjir", "Gempa Bumi", "Kebakaran", "Kabut", "Angin Topan", "Gunung Meletus")
     var selectedDisaster by remember { mutableStateOf(emptyString()) }
 
     BottomSheetScaffold(
-        sheetContent = { MainSheetContent(
-            isExpanded = isExpanded,
-            onCloseIconClicked = { scope.launch { scaffoldState.bottomSheetState.collapse() } }
-        ) },
+        sheetContent = {
+            MainSheetContent(
+                isExpanded = isExpanded,
+                onCloseIconClicked = { scope.launch { scaffoldState.bottomSheetState.collapse() } }
+            )
+        },
         sheetShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         sheetBackgroundColor = MaterialTheme.colorScheme.surface,
-        sheetPeekHeight = 132.dp,
+        sheetPeekHeight = 396.dp,
         scaffoldState = scaffoldState,
     ) {
         MainContent(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             state = state,
             onStateChanged = { state = it },
             placeholder = stringResource(R.string.hint_search_here),
@@ -113,31 +111,45 @@ fun MainContent(
     disasterItems: List<String> = emptyList(),
     onDisasterClicked: (String) -> Unit = {},
 ) {
-    Box(
-        modifier = modifier
-    ) {
-        Column(modifier = Modifier.align(Alignment.TopCenter)) {
-            MainHeaderSection(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(top = 16.dp)
-                    .padding(horizontal = 16.dp),
-                state = state,
-                onStateChanged = onStateChanged,
-                placeholder = placeholder,
-                value = value,
-                onValueChanged = onValueChanged,
-                onSettingsIconClicked = onSettingsIconClicked,
-                onDoneClicked = onDoneClicked,
-                onItemClicked = onItemClicked,
-                predictions = predictions
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            RowMainDisasterChip(
-                items = disasterItems,
-                selected = selectedDisaster,
-                onChipClicked = onDisasterClicked,
+    BoxWithConstraints(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .height((maxHeight + 32.dp) - 396.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Dummy Maps",
+                style = MaterialTheme.typography.titleLarge
             )
         }
+
+        RowMainDisasterChip(
+            items = disasterItems,
+            selected = selectedDisaster,
+            onChipClicked = onDisasterClicked,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 16.dp)
+                .padding(top = 58.dp)
+        )
+        MainHeaderSection(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 16.dp)
+                .padding(horizontal = 16.dp),
+            state = state,
+            onStateChanged = onStateChanged,
+            placeholder = placeholder,
+            value = value,
+            onValueChanged = onValueChanged,
+            onSettingsIconClicked = onSettingsIconClicked,
+            onDoneClicked = onDoneClicked,
+            onItemClicked = onItemClicked,
+            predictions = predictions
+        )
     }
 }
