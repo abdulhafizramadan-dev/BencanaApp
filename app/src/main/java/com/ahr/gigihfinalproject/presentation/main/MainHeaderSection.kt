@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,23 +67,26 @@ fun MainHeaderSection(
     BackHandler(enabled = state == MainHeaderSectionState.FOCUS) {
         onStateChanged(MainHeaderSectionState.DEFAULT)
     }
-    when (state) {
-        MainHeaderSectionState.DEFAULT -> MainHeaderTextFieldDefault(
-            modifier,
-            onStateChanged,
-            placeholder,
-            onSettingsIconClicked
-        )
-        MainHeaderSectionState.FOCUS -> MainHeaderTextFieldActive(
-            modifier,
-            placeholder,
-            value,
-            onValueChanged,
-            onDoneClicked,
-            onItemClicked,
-            predictions,
-            focusRequester
-        )
+    Column {
+        when (state) {
+            MainHeaderSectionState.DEFAULT -> MainHeaderTextFieldDefault(
+                modifier,
+                onStateChanged,
+                placeholder,
+                onSettingsIconClicked
+            )
+
+            MainHeaderSectionState.FOCUS -> MainHeaderTextFieldActive(
+                modifier,
+                placeholder,
+                value,
+                onValueChanged,
+                onDoneClicked,
+                onItemClicked,
+                predictions,
+                focusRequester
+            )
+        }
     }
 }
 
@@ -91,7 +95,7 @@ fun MainHeaderTextFieldDefault(
     modifier: Modifier = Modifier,
     onStateChanged: (MainHeaderSectionState) -> Unit = {},
     placeholder: String = emptyString(),
-    onSettingsIconClicked: () -> Unit = {}
+    onSettingsIconClicked: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -142,7 +146,7 @@ fun MainHeaderTextFieldActive(
     onDoneClicked: () -> Unit = {},
     onItemClicked: (String) -> Unit = {},
     predictions: List<String>,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
 ) {
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()

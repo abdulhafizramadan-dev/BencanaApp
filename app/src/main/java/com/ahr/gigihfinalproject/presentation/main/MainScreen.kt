@@ -1,8 +1,12 @@
 package com.ahr.gigihfinalproject.presentation.main
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,7 +46,6 @@ fun MainScreen() {
         bottomSheetState = bottomSheetState
     )
 
-//    Log.d(TAG, "MainScreen: Fraction = ${scaffoldState.bottomSheetState.progress.fraction > 0.8}")
     Log.d(TAG, "MainScreen: Current State = ${scaffoldState.bottomSheetState.currentValue}")
     Log.d(TAG, "MainScreen: Target State = ${scaffoldState.bottomSheetState.targetValue}")
 
@@ -60,6 +63,9 @@ fun MainScreen() {
         } else emptyList()
     }
 
+    val disasterItems = listOf("Banjir", "Gempa Bumi", "Kebakaran", "Kabut", "Angin Topan", "Gunung Meletus")
+    var selectedDisaster by remember { mutableStateOf(emptyString()) }
+
     BottomSheetScaffold(
         sheetContent = { MainSheetContent(
             isExpanded = isExpanded,
@@ -68,10 +74,12 @@ fun MainScreen() {
         sheetShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         sheetBackgroundColor = MaterialTheme.colorScheme.surface,
         sheetPeekHeight = 132.dp,
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
     ) {
         MainContent(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .fillMaxSize(),
             state = state,
             onStateChanged = { state = it },
             placeholder = stringResource(R.string.hint_search_here),
@@ -80,7 +88,10 @@ fun MainScreen() {
             onSettingsIconClicked = {},
             onDoneClicked = { keyboardController?.hide() },
             onItemClicked = { keyboardController?.hide() },
-            predictions = predictions
+            predictions = predictions,
+            selectedDisaster = selectedDisaster,
+            disasterItems = disasterItems,
+            onDisasterClicked = { selectedDisaster = it }
         )
     }
 }
@@ -98,25 +109,35 @@ fun MainContent(
     onDoneClicked: () -> Unit = {},
     onItemClicked: (String) -> Unit = {},
     predictions: List<String> = emptyList(),
+    selectedDisaster: String = emptyString(),
+    disasterItems: List<String> = emptyList(),
+    onDisasterClicked: (String) -> Unit = {},
 ) {
     Box(
         modifier = modifier
     ) {
-        MainHeaderSection(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .padding(top = 16.dp)
-                .padding(horizontal = 16.dp),
-            state = state,
-            onStateChanged = onStateChanged,
-            placeholder = placeholder,
-            value = value,
-            onValueChanged = onValueChanged,
-            onSettingsIconClicked = onSettingsIconClicked,
-            onDoneClicked = onDoneClicked,
-            onItemClicked = onItemClicked,
-            predictions = predictions
-        )
+        Column(modifier = Modifier.align(Alignment.TopCenter)) {
+            MainHeaderSection(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(top = 16.dp)
+                    .padding(horizontal = 16.dp),
+                state = state,
+                onStateChanged = onStateChanged,
+                placeholder = placeholder,
+                value = value,
+                onValueChanged = onValueChanged,
+                onSettingsIconClicked = onSettingsIconClicked,
+                onDoneClicked = onDoneClicked,
+                onItemClicked = onItemClicked,
+                predictions = predictions
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            RowMainDisasterChip(
+                items = disasterItems,
+                selected = selectedDisaster,
+                onChipClicked = onDisasterClicked,
+            )
+        }
     }
 }
