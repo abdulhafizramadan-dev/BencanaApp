@@ -110,7 +110,7 @@ fun MainHeaderTextFieldDefault(
             text = placeholder,
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.typography.labelLarge.color.copy(alpha = 0.5F)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5F)
             ),
             modifier = Modifier
                 .align(Alignment.CenterStart)
