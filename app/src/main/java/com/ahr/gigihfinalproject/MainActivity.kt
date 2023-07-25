@@ -13,7 +13,9 @@ import androidx.core.view.WindowCompat
 import com.ahr.gigihfinalproject.presentation.NavGraphs
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)

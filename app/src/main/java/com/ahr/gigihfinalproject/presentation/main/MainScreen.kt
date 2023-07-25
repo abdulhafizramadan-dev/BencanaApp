@@ -1,5 +1,6 @@
 package com.ahr.gigihfinalproject.presentation.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -18,6 +19,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahr.gigihfinalproject.R
+import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
+import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.presentation.destinations.SettingsScreenDestination
 import com.ahr.gigihfinalproject.util.emptyString
 import com.ramcosta.composedestinations.annotation.Destination
@@ -37,6 +43,8 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.launch
+
+private const val TAG = "MainScreen"
 
 @RootNavGraph(start = true)
 @Destination
@@ -47,6 +55,17 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator
 ) {
+
+    val homeViewModel = hiltViewModel<MainViewModel>()
+    val disasterReports by homeViewModel.disasterReports.collectAsState()
+
+    LaunchedEffect(key1 = disasterReports) {
+        when (disasterReports) {
+            Resource.Loading -> Log.d(TAG, "MainScreen: Loading...")
+            is Resource.Error -> Log.d(TAG, "MainScreen: Error = ${(disasterReports as Resource.Error<List<DisasterGeometry>>).error.message}")
+            is Resource.Success -> Log.d(TAG, "MainScreen: Disaster Reports = $disasterReports")
+        }
+    }
 
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
@@ -71,7 +90,12 @@ fun MainScreen(
     }
 
     val disasterItems =
-        listOf("Banjir", "Gempa Bumi", "Kebakaran", "Kabut", "Angin Topan", "Gunung Meletus")
+        listOf(stringResource(R.string.flood),
+            stringResource(R.string.earthquake),
+            stringResource(R.string.fire),
+            stringResource(R.string.haze), stringResource(R.string.wind),
+            stringResource(R.string.volcano)
+        )
     var selectedDisaster by remember { mutableStateOf(emptyString()) }
 
     BottomSheetScaffold(
