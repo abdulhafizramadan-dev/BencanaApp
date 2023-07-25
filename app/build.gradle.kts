@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.google.devtools.ksp") version "1.7.20-1.0.8"
 }
 
 android {
@@ -29,6 +30,13 @@ android {
             )
         }
     }
+
+    applicationVariants.all {
+        addJavaSourceFoldersToModel(
+            File(buildDir, "generated/ksp/$name/kotlin")
+        )
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -60,6 +68,10 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material2)
     implementation(libs.material3)
+
+    implementation("io.github.raamcosta.compose-destinations:core:1.7.41-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.41-beta")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

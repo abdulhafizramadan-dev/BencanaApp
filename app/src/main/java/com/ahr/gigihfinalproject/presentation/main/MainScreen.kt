@@ -3,8 +3,6 @@ package com.ahr.gigihfinalproject.presentation.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,19 +30,31 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ahr.gigihfinalproject.R
+import com.ahr.gigihfinalproject.presentation.destinations.SettingsScreenDestination
 import com.ahr.gigihfinalproject.util.emptyString
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.launch
 
+@RootNavGraph(start = true)
+@Destination
+@ExperimentalMaterial3Api
 @OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterialApi
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator
+) {
 
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = bottomSheetState
     )
+
+    val navigateToSettingsScreen = { navigator.navigate(SettingsScreenDestination()) }
 
     val isExpanded = remember(key1 = scaffoldState.bottomSheetState.currentValue) {
         scaffoldState.bottomSheetState.currentValue == BottomSheetValue.Expanded
@@ -83,7 +93,7 @@ fun MainScreen() {
             placeholder = stringResource(R.string.hint_search_here),
             value = value,
             onValueChanged = { value = it },
-            onSettingsIconClicked = {},
+            onSettingsIconClicked = navigateToSettingsScreen,
             onDoneClicked = { keyboardController?.hide() },
             onItemClicked = { keyboardController?.hide() },
             predictions = predictions,
