@@ -100,12 +100,15 @@ fun MainScreen(
 
     BottomSheetScaffold(
         sheetContent = {
-            MainSheetContent(
-                isExpanded = isExpanded,
-                onCloseIconClicked = { scope.launch { scaffoldState.bottomSheetState.collapse() } }
-            )
+            if (disasterReports is Resource.Success) {
+                MainSheetContent(
+                    isExpanded = isExpanded,
+                    onCloseIconClicked = { scope.launch { scaffoldState.bottomSheetState.collapse() } },
+                    latestDisasters = (disasterReports as Resource.Success<List<DisasterGeometry>>).data.map { it.disasterProperties }
+                )
+            }
         },
-        sheetShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetBackgroundColor = MaterialTheme.colorScheme.surface,
         sheetPeekHeight = 396.dp,
         scaffoldState = scaffoldState,

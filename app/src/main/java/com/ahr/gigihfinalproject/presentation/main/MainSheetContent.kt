@@ -1,7 +1,9 @@
 package com.ahr.gigihfinalproject.presentation.main
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -24,12 +28,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ahr.gigihfinalproject.R
+import com.ahr.gigihfinalproject.domain.model.DisasterProperties
+import com.ahr.gigihfinalproject.presentation.component.LatestDisasterItem
 
 @Composable
 fun MainSheetContent(
     modifier: Modifier = Modifier,
     isExpanded: Boolean = false,
-    onCloseIconClicked: () -> Unit = {}
+    onCloseIconClicked: () -> Unit = {},
+    latestDisasters: List<DisasterProperties> = emptyList()
 ) {
     val headerPadding = if (isExpanded) 0.dp else 16.dp
     Column(
@@ -50,7 +57,10 @@ fun MainSheetContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AnimatedVisibility(visible = isExpanded) {
-                IconButton(onClick = onCloseIconClicked, Modifier.padding(end = 8.dp).offset(y = 4.dp)) {
+                IconButton(onClick = onCloseIconClicked,
+                    Modifier
+                        .padding(end = 8.dp)
+                        .offset(y = 4.dp)) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.desc_close_bottom_sheet)
@@ -70,6 +80,17 @@ fun MainSheetContent(
                     .fillMaxWidth(),
                 color = MaterialTheme.colorScheme.onBackground
             )
+        }
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(items = latestDisasters, key = { it.pkey }) {
+                LatestDisasterItem(
+                    disasterProperties = it,
+                )
+            }
         }
     }
 }
