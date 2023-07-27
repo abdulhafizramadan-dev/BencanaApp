@@ -234,7 +234,8 @@ fun MainScreen(
             mapsProperties = mapsProperties,
             mapsUiSettings = mapsUiSettings,
             latLngLists = disasterMarker,
-            focusRequester = focusRequester
+            focusRequester = focusRequester,
+            selectedProvince = selectedProvince
         )
     }
 }
@@ -260,7 +261,8 @@ fun MainContent(
     mapsProperties: MapProperties = MapProperties(),
     mapsUiSettings: MapUiSettings = MapUiSettings(),
     latLngLists: List<LatLng> = emptyList(),
-    focusRequester: FocusRequester = FocusRequester.Default
+    focusRequester: FocusRequester = FocusRequester.Default,
+    selectedProvince: Province? = null
 ) {
 
     BoxWithConstraints(modifier = modifier) {
@@ -304,7 +306,8 @@ fun MainContent(
             onDoneImeClicked = onDoneImeClicked,
             onProvinceClicked = onProvinceClicked,
             provinceList = provinceList,
-            focusRequester = focusRequester
+            focusRequester = focusRequester,
+            selectedProvince = selectedProvince
         )
     }
 }

@@ -63,8 +63,9 @@ fun MainHeaderSection(
     onSettingsIconClicked: () -> Unit = {},
     onDoneImeClicked: () -> Unit = {},
     onProvinceClicked: (Province) -> Unit = {},
+    selectedProvince: Province? = null,
     provinceList: List<Province> = emptyList(),
-    focusRequester: FocusRequester = FocusRequester.Default
+    focusRequester: FocusRequester = FocusRequester.Default,
 ) {
     Column {
         when (state) {
@@ -83,7 +84,8 @@ fun MainHeaderSection(
                 onDoneImeClicked,
                 onProvinceClicked,
                 provinceList,
-                focusRequester
+                focusRequester,
+                selectedProvince
             )
         }
     }
@@ -147,6 +149,7 @@ fun MainHeaderTextFieldActive(
     onItemClicked: (Province) -> Unit = {},
     predictions: List<Province>,
     focusRequester: FocusRequester,
+    selectedProvince: Province?,
 ) {
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
@@ -161,14 +164,16 @@ fun MainHeaderTextFieldActive(
         predictions = predictions,
         focusRequester = focusRequester
     ) { province ->
+        val container = if (province.code == selectedProvince?.code) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background
+        val content = if (province.code == selectedProvince?.code) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
         Row(
             modifier = Modifier
                 .clickable { onItemClicked(province) }
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
+                .background(container)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Text(text = province.name)
+            Text(text = province.name, color = content)
         }
     }
 }
