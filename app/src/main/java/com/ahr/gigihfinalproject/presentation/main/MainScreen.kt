@@ -71,7 +71,7 @@ private const val TAG = "MainScreen"
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen(
-    navigator: DestinationsNavigator = EmptyDestinationsNavigator
+    navigator: DestinationsNavigator = EmptyDestinationsNavigator,
 ) {
 
     val homeViewModel = hiltViewModel<MainViewModel>()
@@ -80,9 +80,9 @@ fun MainScreen(
     val context = LocalContext.current
     val disasterMarker = remember { mutableStateListOf<LatLng>() }
 
-     var myLocationActive by remember {
-         mutableStateOf(false)
-     }
+    var myLocationActive by remember {
+        mutableStateOf(false)
+    }
 
     val locationPermissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -97,13 +97,11 @@ fun MainScreen(
     val boundsBuilder: LatLngBounds.Builder by remember {
         mutableStateOf(LatLngBounds.builder())
     }
-    val cameraPositionState = rememberCameraPositionState {
-//        position = CameraPosition.fromLatLngZoom(boundsBuilder.build(), 10f)
-    }
+    val cameraPositionState = rememberCameraPositionState()
     val mapsUiSettings = MapUiSettings(
         zoomControlsEnabled = false,
-        compassEnabled = false,
-        myLocationButtonEnabled = false
+        compassEnabled = true,
+        myLocationButtonEnabled = myLocationActive
     )
     val mapsProperties = MapProperties(
         isMyLocationEnabled = myLocationActive
@@ -126,7 +124,7 @@ fun MainScreen(
             )
         }
     }
-    
+
     LaunchedEffect(key1 = locationPermissionState.allPermissionsGranted) {
         if (locationPermissionState.allPermissionsGranted) {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
@@ -141,7 +139,11 @@ fun MainScreen(
         when (disasterReports) {
             Resource.Idling -> {}
             Resource.Loading -> Log.d(TAG, "MainScreen: Loading...")
-            is Resource.Error -> Log.d(TAG, "MainScreen: Error = ${(disasterReports as Resource.Error<List<DisasterGeometry>>).error.message}")
+            is Resource.Error -> Log.d(
+                TAG,
+                "MainScreen: Error = ${(disasterReports as Resource.Error<List<DisasterGeometry>>).error.message}"
+            )
+
             is Resource.Success -> {
             }
         }
@@ -169,7 +171,8 @@ fun MainScreen(
     }
 
     val disasterItems =
-        listOf(stringResource(R.string.flood),
+        listOf(
+            stringResource(R.string.flood),
             stringResource(R.string.earthquake),
             stringResource(R.string.fire),
             stringResource(R.string.haze), stringResource(R.string.wind),
@@ -234,7 +237,7 @@ fun MainContent(
     cameraPositionState: CameraPositionState = rememberCameraPositionState(),
     mapsProperties: MapProperties = MapProperties(),
     mapsUiSettings: MapUiSettings = MapUiSettings(),
-    longLnts: List<LatLng> = emptyList()
+    longLnts: List<LatLng> = emptyList(),
 ) {
 
     BoxWithConstraints(modifier = modifier) {
@@ -245,7 +248,7 @@ fun MainContent(
             properties = mapsProperties,
             uiSettings = mapsUiSettings,
             cameraPositionState = cameraPositionState,
-            contentPadding = PaddingValues(all = 16.dp)
+            contentPadding = PaddingValues(start = 8.dp, top = 146.dp, end = 8.dp, bottom = 24.dp)
 
         ) {
             longLnts.forEach {
