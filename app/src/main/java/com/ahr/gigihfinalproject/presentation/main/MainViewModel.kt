@@ -6,6 +6,7 @@ import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,9 +20,10 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
 
     init {
         viewModelScope.launch {
-            homeUseCase.getLatestDisasterInformation().collect {
-                _disasterReports.value = it
-            }
+            delay(2000L)
+//            homeUseCase.getLatestDisasterInformation().collect {
+//                _disasterReports.value = it
+//            }
         }
 
     }

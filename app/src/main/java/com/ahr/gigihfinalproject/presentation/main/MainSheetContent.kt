@@ -27,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ahr.gigihfinalproject.R
-import com.ahr.gigihfinalproject.domain.model.DisasterProperties
+import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
+import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.presentation.component.LatestDisasterItem
 
 @Composable
@@ -36,7 +38,7 @@ fun MainSheetContent(
     modifier: Modifier = Modifier,
     isExpanded: Boolean = false,
     onCloseIconClicked: () -> Unit = {},
-    latestDisasters: List<DisasterProperties> = emptyList()
+    latestDisasters: Resource<List<DisasterGeometry>> = Resource.Idling
 ) {
     val headerPadding = if (isExpanded) 0.dp else 16.dp
     Column(
@@ -69,7 +71,9 @@ fun MainSheetContent(
             }
             Text(
                 text = stringResource(R.string.label_latest_disaster_information),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontSize = 20.sp
+                ),
                 modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
             )
         }
@@ -81,15 +85,23 @@ fun MainSheetContent(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(items = latestDisasters, key = { it.pkey }) {
-                LatestDisasterItem(
-                    disasterProperties = it,
-                )
+
+        when (latestDisasters) {
+            Resource.Idling -> {}
+            Resource.Loading -> {}
+            is Resource.Error -> {}
+            is Resource.Success -> {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(items = latestDisasters.data.map { it.disasterProperties }, key = { it.pkey }) {
+                        LatestDisasterItem(
+                            disasterProperties = it,
+                        )
+                    }
+                }
             }
         }
     }
