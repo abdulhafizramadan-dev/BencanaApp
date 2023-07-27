@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.presentation.component.LatestDisasterItem
+import com.ahr.gigihfinalproject.presentation.component.LatestDisasterLoadingItem
 
 @Composable
 fun MainSheetContent(
@@ -89,9 +91,18 @@ fun MainSheetContent(
         }
 
         when (latestDisasters) {
-            Resource.Idling -> {}
-            Resource.Loading -> {}
             is Resource.Error -> {}
+            Resource.Idling -> {}
+            Resource.Loading -> {
+                repeat(5) {
+                    LatestDisasterLoadingItem(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
             is Resource.Success -> {
                 LazyColumn(
                     modifier = Modifier.weight(1f),

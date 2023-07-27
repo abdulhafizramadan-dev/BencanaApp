@@ -1,13 +1,16 @@
 package com.ahr.gigihfinalproject.presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,6 +29,7 @@ import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.domain.model.DisasterProperties
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ahr.gigihfinalproject.util.toDisasterTimeFormat
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun LatestDisasterItem(
@@ -96,6 +100,66 @@ fun LatestDisasterItem(
     }
 }
 
+@Composable
+fun LatestDisasterLoadingItem(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.shimmer()
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(size = 16.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .width(100.dp)
+                .height(72.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.weight(2f)
+                        .height(16.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Box(
+                    modifier = Modifier.weight(1f)
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(size = 8.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(4.dp),
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth(0.6f)
+                    .height(14.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.weight(1.5f)
+                        .height(14.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Box(
+                    modifier = Modifier.weight(3f)
+                        .height(14.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                )
+            }
+        }
+    }
+}
+
+
 @Preview
 @Composable
 fun PreviewLatestDisasterItem() {
@@ -103,18 +167,19 @@ fun PreviewLatestDisasterItem() {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            LatestDisasterItem(
-                disasterProperties = DisasterProperties(
-                    "",
-                    "earthquake",
-                    "22",
-                    "231",
-                    "grasp",
-                    "Trainer - Maulana Bahrul alam",
-                    "confirmed"
-                ),
-                modifier = Modifier.padding(16.dp)
-            )
+//            LatestDisasterItem(
+//                disasterProperties = DisasterProperties(
+//                    "",
+//                    "earthquake",
+//                    "22",
+//                    "231",
+//                    "grasp",
+//                    "Trainer - Maulana Bahrul alam",
+//                    "confirmed"
+//                ),
+//                modifier = Modifier.padding(16.dp)
+//            )
+            LatestDisasterLoadingItem(modifier = Modifier.padding(14.dp))
         }
     }
 }

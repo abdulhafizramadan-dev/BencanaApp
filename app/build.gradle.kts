@@ -93,6 +93,8 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.0.5")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.2")
 
     testImplementation(libs.junit)
