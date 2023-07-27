@@ -1,9 +1,13 @@
 package com.ahr.gigihfinalproject.di
 
 import com.ahr.gigihfinalproject.data.DisasterRepositoryImpl
+import com.ahr.gigihfinalproject.data.UserPreferenceRepositoryImpl
 import com.ahr.gigihfinalproject.domain.interactor.HomeInteractor
+import com.ahr.gigihfinalproject.domain.interactor.SettingsInteractor
 import com.ahr.gigihfinalproject.domain.repository.DisasterRepository
+import com.ahr.gigihfinalproject.domain.repository.UserPreferenceRepository
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
+import com.ahr.gigihfinalproject.domain.usecase.SettingsUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -22,5 +26,15 @@ abstract class DomainModule {
     abstract fun bindHomeUseCase(
         homeInteractor: HomeInteractor
     ): HomeUseCase
+
+    @Binds
+    abstract fun bindUserPreferenceRepository(
+        userPreferenceRepositoryImpl: UserPreferenceRepositoryImpl
+    ): UserPreferenceRepository
+
+    @Binds
+    abstract fun bindSettingsUseCase(
+        settingsInteractor: SettingsInteractor
+    ): SettingsUseCase
 
 }

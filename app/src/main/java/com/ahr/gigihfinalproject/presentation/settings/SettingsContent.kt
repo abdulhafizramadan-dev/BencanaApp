@@ -18,21 +18,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ahr.gigihfinalproject.domain.model.UserTheme
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ahr.gigihfinalproject.util.emptyString
 
 @Composable
 fun SettingsContent(
     modifier: Modifier = Modifier,
+    userTheme: UserTheme = UserTheme.Default,
+    updateUserTheme: (UserTheme) -> Unit
 ) {
+
+    val isDarkMode = userTheme == UserTheme.Dark
+    val updateDarkMode: (Boolean) -> Unit = { state ->
+        val userTheme = if (state) UserTheme.Dark else UserTheme.Light
+        updateUserTheme(userTheme)
+    }
+
     Column(modifier = modifier) {
-        var state by remember { mutableStateOf(false) }
         SettingItem(
             modifier = Modifier.padding(16.dp),
             title = "Dark Mode",
             subtitle = "Enable dark mode",
-            state = state,
-            onStateChange = { state = it }
+            state = isDarkMode,
+            onStateChange = updateDarkMode
         )
     }
 }

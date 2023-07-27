@@ -1,8 +1,11 @@
 package com.ahr.gigihfinalproject.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.data.network.service.PetaBencanaService
+import com.ahr.gigihfinalproject.data.preference.dataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +35,14 @@ object DataModule {
         retrofit: Retrofit,
     ): PetaBencanaService {
         return retrofit.create()
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserPreferences(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return context.dataStore
     }
 
 }
