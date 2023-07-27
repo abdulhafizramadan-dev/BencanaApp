@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ahr.gigihfinalproject.R
@@ -72,7 +73,8 @@ fun MainSheetContent(
             Text(
                 text = stringResource(R.string.label_latest_disaster_information),
                 style = MaterialTheme.typography.titleLarge.copy(
-                    fontSize = 20.sp
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium
                 ),
                 modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
             )

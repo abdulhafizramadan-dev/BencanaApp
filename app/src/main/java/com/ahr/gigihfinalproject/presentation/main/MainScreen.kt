@@ -3,6 +3,7 @@ package com.ahr.gigihfinalproject.presentation.main
 import android.Manifest
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
@@ -79,6 +81,7 @@ fun MainScreen(
     val mainHeaderSectionState = mainScreenUiState.mainHeaderSectionState
     val provinceSearchHint = mainScreenUiState.provinceSearchHint
     val provinceSearchQuery = mainScreenUiState.provinceSearchQuery
+    val selectedProvince = mainScreenUiState.selectedProvince
     val selectedDisaster = mainScreenUiState.selectedDisasterFilter
     val disasterFilters = mainScreenUiState.disasterFilters
     val disasterReports = mainScreenUiState.latestDisasterInformations
@@ -86,6 +89,7 @@ fun MainScreen(
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(key1 = Unit) {
         mainViewModel.updateProvinceSearchHint(context.getString(R.string.hint_search_here))
@@ -122,6 +126,7 @@ fun MainScreen(
 
     LaunchedEffect(key1 = disasterReports) {
         if (disasterReports is Resource.Success) {
+            disasterMarker.clear()
             val disasterCoordinates = disasterReports.data.map { it.coordinates }
             disasterCoordinates.forEach { coordinates ->
                 val position = LatLng(
@@ -189,7 +194,13 @@ fun MainScreen(
     val onDisasterClicked: (DisasterType?) -> Unit = {
         mainViewModel.updateSelectedDisasterFilter(it)
         mainViewModel.getDisasterReportWithFilter()
-        disasterMarker.clear()
+    }
+
+    BackHandler(enabled = mainHeaderSectionState == MainHeaderSectionState.FOCUS) {
+        mainViewModel.updateMainHeaderSectionState(MainHeaderSectionState.DEFAULT)
+        if (selectedProvince == null) {
+            mainViewModel.getDisasterReportWithFilter()
+        }
     }
 
     BottomSheetScaffold(
@@ -222,7 +233,8 @@ fun MainScreen(
             cameraPositionState = cameraPositionState,
             mapsProperties = mapsProperties,
             mapsUiSettings = mapsUiSettings,
-            latLngLists = disasterMarker
+            latLngLists = disasterMarker,
+            focusRequester = focusRequester
         )
     }
 }
@@ -248,6 +260,7 @@ fun MainContent(
     mapsProperties: MapProperties = MapProperties(),
     mapsUiSettings: MapUiSettings = MapUiSettings(),
     latLngLists: List<LatLng> = emptyList(),
+    focusRequester: FocusRequester = FocusRequester.Default
 ) {
 
     BoxWithConstraints(modifier = modifier) {
@@ -290,7 +303,8 @@ fun MainContent(
             onSettingsIconClicked = onSettingsIconClicked,
             onDoneImeClicked = onDoneImeClicked,
             onProvinceClicked = onProvinceClicked,
-            provinceList = provinceList
+            provinceList = provinceList,
+            focusRequester = focusRequester
         )
     }
 }

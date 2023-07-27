@@ -1,6 +1,5 @@
 package com.ahr.gigihfinalproject.presentation.main
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,11 +64,8 @@ fun MainHeaderSection(
     onDoneImeClicked: () -> Unit = {},
     onProvinceClicked: (Province) -> Unit = {},
     provinceList: List<Province> = emptyList(),
+    focusRequester: FocusRequester = FocusRequester.Default
 ) {
-    val focusRequester = remember { FocusRequester() }
-    BackHandler(enabled = state == MainHeaderSectionState.FOCUS) {
-        onStateChanged(MainHeaderSectionState.DEFAULT)
-    }
     Column {
         when (state) {
             MainHeaderSectionState.DEFAULT -> MainHeaderTextFieldDefault(

@@ -20,7 +20,7 @@
 
     <string-array name="disaster_codes">
         <item>flood</item>
-        <item>earth</item>
+        <item>earthquake</item>
         <item>fire</item>
         <item>haze</item>
         <item>wind</item>
@@ -29,6 +29,7 @@
 
     <!--  Province List  -->
     <string-array name="province_names">
+        <item>Jawa Tengah</item>
         <item>Jawa Timur</item>
         <item>Kalimantan Timur</item>
         <item>Nusa Tenggara Timur</item>
@@ -58,6 +59,7 @@
     </string-array>
 
     <string-array name="province_codes">
+        <item>ID-JT</item>
         <item>ID-JI</item>
         <item>ID-KI</item>
         <item>ID-NT</item>
