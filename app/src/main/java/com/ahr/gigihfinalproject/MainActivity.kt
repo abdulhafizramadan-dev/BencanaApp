@@ -3,6 +3,7 @@ package com.ahr.gigihfinalproject
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +16,7 @@ import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @AndroidEntryPoint
 @ExperimentalMaterialApi

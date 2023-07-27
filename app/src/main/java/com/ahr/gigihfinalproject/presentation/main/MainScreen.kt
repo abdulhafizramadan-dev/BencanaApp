@@ -2,7 +2,7 @@ package com.ahr.gigihfinalproject.presentation.main
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,11 +32,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahr.gigihfinalproject.R
-import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
+import com.ahr.gigihfinalproject.domain.model.DisasterType
+import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.presentation.destinations.SettingsScreenDestination
 import com.ahr.gigihfinalproject.util.emptyString
@@ -59,10 +59,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-private const val TAG = "MainScreen"
-
+@ExperimentalFoundationApi
 @SuppressLint("MissingPermission")
 @RootNavGraph(start = true)
 @Destination
@@ -74,10 +72,24 @@ fun MainScreen(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
 ) {
 
-    val homeViewModel = hiltViewModel<MainViewModel>()
-    val disasterReports by homeViewModel.disasterReports.collectAsState()
+    val mainViewModel = hiltViewModel<MainViewModel>()
+    val mainScreenUiState by mainViewModel.homeScreenUiState.collectAsState()
+
+    val mainHeaderSectionState = mainScreenUiState.mainHeaderSectionState
+    val provinceSearchHint = mainScreenUiState.provinceSearchHint
+    val provinceSearchQuery = mainScreenUiState.provinceSearchQuery
+    val selectedDisaster = mainScreenUiState.selectedDisasterFilter
+    val disasterFilters = mainScreenUiState.disasterFilters
+    val disasterReports = mainScreenUiState.latestDisasterInformations
+    val provinceList = mainScreenUiState.provinceList
+
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = Unit) {
+        mainViewModel.updateProvinceSearchHint(context.getString(R.string.hint_search_here))
+    }
+
     val disasterMarker = remember { mutableStateListOf<LatLng>() }
 
     var myLocationActive by remember {
@@ -107,45 +119,33 @@ fun MainScreen(
         isMyLocationEnabled = myLocationActive
     )
 
-    LaunchedEffect(key1 = Unit) {
-        val singapore = LatLng(1.35, 103.87)
-        for (i in 1..10) {
-            val position = LatLng(
-                singapore.latitude + Random.nextFloat(),
-                singapore.longitude + Random.nextFloat(),
-            )
-            disasterMarker.add(position)
-            boundsBuilder.include(position)
-        }
-        scope.launch {
-            delay(1000L)
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100)
-            )
+    LaunchedEffect(key1 = disasterReports) {
+        if (disasterReports is Resource.Success) {
+            val disasterCoordinates = disasterReports.data.map { it.coordinates }
+            disasterCoordinates.forEach { coordinates ->
+                val position = LatLng(
+                    coordinates[1],
+                    coordinates[0],
+                )
+                disasterMarker.add(position)
+                boundsBuilder.include(position)
+            }
+            scope.launch {
+                delay(1000L)
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5)
+                )
+            }
         }
     }
 
     LaunchedEffect(key1 = locationPermissionState.allPermissionsGranted) {
         if (locationPermissionState.allPermissionsGranted) {
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 myLocationActive = true
             }
         } else {
             locationPermissionState.launchMultiplePermissionRequest()
-        }
-    }
-
-    LaunchedEffect(key1 = disasterReports) {
-        when (disasterReports) {
-            Resource.Idling -> {}
-            Resource.Loading -> Log.d(TAG, "MainScreen: Loading...")
-            is Resource.Error -> Log.d(
-                TAG,
-                "MainScreen: Error = ${(disasterReports as Resource.Error<List<DisasterGeometry>>).error.message}"
-            )
-
-            is Resource.Success -> {
-            }
         }
     }
 
@@ -154,31 +154,34 @@ fun MainScreen(
         bottomSheetState = bottomSheetState
     )
 
-    val navigateToSettingsScreen = { navigator.navigate(SettingsScreenDestination()) }
-
     val isExpanded = remember(key1 = scaffoldState.bottomSheetState.currentValue) {
         scaffoldState.bottomSheetState.currentValue == BottomSheetValue.Expanded
     }
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    var state by remember { mutableStateOf(MainHeaderSectionState.DEFAULT) }
-    var value by remember { mutableStateOf("") }
-    val dummyNames = listOf("Abdul", "Hafiz", "Ramadan")
-    val predictions = remember(key1 = value) {
-        if (value.isNotEmpty()) {
-            dummyNames.filter { it.contains(value, true) }
-        } else emptyList()
+
+    val onProvinceQueryChanged: (String) -> Unit = {
+        val searchHint = it.ifEmpty { context.getString(R.string.hint_search_here) }
+        mainViewModel.updateProvinceSearchHint(hint = searchHint)
+        mainViewModel.updateProvinceSearchQuery(query = it)
+        mainViewModel.searchProvinces(query = it)
     }
 
-    val disasterItems =
-        listOf(
-            stringResource(R.string.flood),
-            stringResource(R.string.earthquake),
-            stringResource(R.string.fire),
-            stringResource(R.string.haze), stringResource(R.string.wind),
-            stringResource(R.string.volcano)
-        )
-    var selectedDisaster by remember { mutableStateOf(emptyString()) }
+    val onSettingsIconClicked: () -> Unit = { navigator.navigate(SettingsScreenDestination()) }
+
+    val onDoneImeClicked: () -> Unit = { keyboardController?.hide() }
+
+    val onProvinceClicked: (Province) -> Unit = {
+        keyboardController?.hide()
+        mainViewModel.updateProvinceSearchHint(hint = it.name)
+        mainViewModel.updateProvinceSearchQuery(query = it.name)
+        mainViewModel.updateMainHeaderSectionState(MainHeaderSectionState.DEFAULT)
+    }
+
+    val onDisasterClicked: (DisasterType) -> Unit = {
+        mainViewModel.updateSelectedDisasterFilter(it)
+        disasterMarker.clear()
+    }
 
     BottomSheetScaffold(
         sheetContent = {
@@ -195,29 +198,27 @@ fun MainScreen(
     ) {
         MainContent(
             modifier = Modifier.fillMaxSize(),
-            state = state,
-            onStateChanged = { state = it },
-            placeholder = stringResource(R.string.hint_search_here),
-            value = value,
-            onValueChanged = { value = it },
-            onSettingsIconClicked = navigateToSettingsScreen,
-            onDoneClicked = { keyboardController?.hide() },
-            onItemClicked = { keyboardController?.hide() },
-            predictions = predictions,
+            state = mainHeaderSectionState,
+            onStateChanged = mainViewModel::updateMainHeaderSectionState,
+            placeholder = provinceSearchHint,
+            provinceSearchQuery = provinceSearchQuery,
+            onProvinceQueryChanged = onProvinceQueryChanged,
+            onSettingsIconClicked = onSettingsIconClicked,
+            onDoneImeClicked = onDoneImeClicked,
+            onProvinceClicked = onProvinceClicked,
+            provinceList = provinceList,
             selectedDisaster = selectedDisaster,
-            disasterItems = disasterItems,
-            onDisasterClicked = {
-                selectedDisaster = it
-                disasterMarker.clear()
-            },
+            disasterItems = disasterFilters,
+            onDisasterClicked = onDisasterClicked,
             cameraPositionState = cameraPositionState,
             mapsProperties = mapsProperties,
             mapsUiSettings = mapsUiSettings,
-            longLnts = disasterMarker
+            latLngLists = disasterMarker
         )
     }
 }
 
+@ExperimentalFoundationApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
@@ -225,19 +226,19 @@ fun MainContent(
     state: MainHeaderSectionState = MainHeaderSectionState.DEFAULT,
     onStateChanged: (MainHeaderSectionState) -> Unit = {},
     placeholder: String = emptyString(),
-    value: String = emptyString(),
-    onValueChanged: (String) -> Unit = {},
+    provinceSearchQuery: String = emptyString(),
+    onProvinceQueryChanged: (String) -> Unit = {},
     onSettingsIconClicked: () -> Unit = {},
-    onDoneClicked: () -> Unit = {},
-    onItemClicked: (String) -> Unit = {},
-    predictions: List<String> = emptyList(),
-    selectedDisaster: String = emptyString(),
-    disasterItems: List<String> = emptyList(),
-    onDisasterClicked: (String) -> Unit = {},
+    onDoneImeClicked: () -> Unit = {},
+    provinceList: List<Province> = emptyList(),
+    onProvinceClicked: (Province) -> Unit = {},
+    selectedDisaster: DisasterType? = null,
+    disasterItems: List<DisasterType> = emptyList(),
+    onDisasterClicked: (DisasterType) -> Unit = {},
     cameraPositionState: CameraPositionState = rememberCameraPositionState(),
     mapsProperties: MapProperties = MapProperties(),
     mapsUiSettings: MapUiSettings = MapUiSettings(),
-    longLnts: List<LatLng> = emptyList(),
+    latLngLists: List<LatLng> = emptyList(),
 ) {
 
     BoxWithConstraints(modifier = modifier) {
@@ -248,15 +249,11 @@ fun MainContent(
             properties = mapsProperties,
             uiSettings = mapsUiSettings,
             cameraPositionState = cameraPositionState,
-            contentPadding = PaddingValues(start = 8.dp, top = 146.dp, end = 8.dp, bottom = 24.dp)
+            contentPadding = PaddingValues(start = 6.dp, top = 146.dp, end = 6.dp, bottom = 24.dp)
 
         ) {
-            longLnts.forEach {
-                Marker(
-                    state = MarkerState(position = it),
-                    title = "Singapore",
-                    snippet = "Marker in Singapore"
-                )
+            latLngLists.forEach {
+                Marker(state = MarkerState(position = it))
             }
         }
 
@@ -279,12 +276,12 @@ fun MainContent(
             state = state,
             onStateChanged = onStateChanged,
             placeholder = placeholder,
-            value = value,
-            onValueChanged = onValueChanged,
+            query = provinceSearchQuery,
+            onProvinceQueryChanged = onProvinceQueryChanged,
             onSettingsIconClicked = onSettingsIconClicked,
-            onDoneClicked = onDoneClicked,
-            onItemClicked = onItemClicked,
-            predictions = predictions
+            onDoneImeClicked = onDoneImeClicked,
+            onProvinceClicked = onProvinceClicked,
+            provinceList = provinceList
         )
     }
 }

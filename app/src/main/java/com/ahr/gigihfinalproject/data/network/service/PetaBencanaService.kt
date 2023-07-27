@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface PetaBencanaService {
 
-    @GET("reports")
+    @GET("reports?timeperiod=172800")
     suspend fun getLatestDisasterInformation(): DisasterReportResponse
 
     @GET("reports")

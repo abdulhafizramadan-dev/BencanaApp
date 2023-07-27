@@ -1,6 +1,7 @@
 package com.ahr.gigihfinalproject.presentation.main
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahr.gigihfinalproject.R
+import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.presentation.component.AutoCompleteTextField
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ahr.gigihfinalproject.util.emptyString
@@ -49,6 +51,7 @@ enum class MainHeaderSectionState {
     DEFAULT
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @Composable
 fun MainHeaderSection(
@@ -56,12 +59,12 @@ fun MainHeaderSection(
     state: MainHeaderSectionState = MainHeaderSectionState.DEFAULT,
     onStateChanged: (MainHeaderSectionState) -> Unit = {},
     placeholder: String = emptyString(),
-    value: String = emptyString(),
-    onValueChanged: (String) -> Unit = {},
+    query: String = emptyString(),
+    onProvinceQueryChanged: (String) -> Unit = {},
     onSettingsIconClicked: () -> Unit = {},
-    onDoneClicked: () -> Unit = {},
-    onItemClicked: (String) -> Unit = {},
-    predictions: List<String> = emptyList(),
+    onDoneImeClicked: () -> Unit = {},
+    onProvinceClicked: (Province) -> Unit = {},
+    provinceList: List<Province> = emptyList(),
 ) {
     val focusRequester = remember { FocusRequester() }
     BackHandler(enabled = state == MainHeaderSectionState.FOCUS) {
@@ -79,11 +82,11 @@ fun MainHeaderSection(
             MainHeaderSectionState.FOCUS -> MainHeaderTextFieldActive(
                 modifier,
                 placeholder,
-                value,
-                onValueChanged,
-                onDoneClicked,
-                onItemClicked,
-                predictions,
+                query,
+                onProvinceQueryChanged,
+                onDoneImeClicked,
+                onProvinceClicked,
+                provinceList,
                 focusRequester
             )
         }
@@ -136,6 +139,7 @@ fun MainHeaderTextFieldDefault(
     }
 }
 
+@ExperimentalFoundationApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainHeaderTextFieldActive(
@@ -144,8 +148,8 @@ fun MainHeaderTextFieldActive(
     value: String = emptyString(),
     onValueChanged: (String) -> Unit = {},
     onDoneClicked: () -> Unit = {},
-    onItemClicked: (String) -> Unit = {},
-    predictions: List<String>,
+    onItemClicked: (Province) -> Unit = {},
+    predictions: List<Province>,
     focusRequester: FocusRequester,
 ) {
     LaunchedEffect(key1 = Unit) {
@@ -160,19 +164,20 @@ fun MainHeaderTextFieldActive(
         onDoneClicked = onDoneClicked,
         predictions = predictions,
         focusRequester = focusRequester
-    ) { text ->
+    ) { province ->
         Row(
             modifier = Modifier
-                .clickable { onItemClicked(text) }
+                .clickable { onItemClicked(province) }
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Text(text = text)
+            Text(text = province.name)
         }
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -185,12 +190,6 @@ fun PreviewMainHeaderSection() {
             val keyboardController = LocalSoftwareKeyboardController.current
             var state by remember { mutableStateOf(MainHeaderSectionState.DEFAULT) }
             var value by remember { mutableStateOf("") }
-            val dummyNames = listOf("Abdul", "Hafiz", "Ramadan")
-            val predictions = remember(key1 = value) {
-                if (value.isNotEmpty()) {
-                    dummyNames.filter { it.contains(value, true) }
-                } else emptyList()
-            }
 
             MainHeaderSection(
                 modifier = Modifier
@@ -199,12 +198,12 @@ fun PreviewMainHeaderSection() {
                 state = state,
                 onStateChanged = { state = it },
                 placeholder = stringResource(R.string.hint_search_here),
-                value = value,
-                onValueChanged = { value = it },
+                query = value,
+                onProvinceQueryChanged = { value = it },
                 onSettingsIconClicked = {},
-                onDoneClicked = { keyboardController?.hide() },
-                onItemClicked = { keyboardController?.hide() },
-                predictions = predictions
+                onDoneImeClicked = { keyboardController?.hide() },
+                onProvinceClicked = { keyboardController?.hide() },
+                provinceList = emptyList()
             )
         }
     }

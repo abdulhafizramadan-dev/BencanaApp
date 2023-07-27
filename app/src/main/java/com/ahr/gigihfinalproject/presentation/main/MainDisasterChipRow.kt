@@ -25,25 +25,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
-import com.ahr.gigihfinalproject.util.emptyString
 
 @Composable
 fun RowMainDisasterChip(
     modifier: Modifier = Modifier,
-    selected: String = emptyString(),
-    items: List<String> = emptyList(),
-    onChipClicked: (String) -> Unit = {}
+    selected: DisasterType? = null,
+    items: List<DisasterType> = emptyList(),
+    onChipClicked: (DisasterType) -> Unit = {}
 ) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        items(items = items, key = { it }) { text ->
+        items(items = items, key = { it.code }) { disaster ->
             MainDisasterChip(
-                selected = selected == text,
-                text = text,
+                selected = selected?.code == disaster.code,
+                disasterType = disaster,
                 onClicked = onChipClicked
             )
         }
@@ -54,8 +54,8 @@ fun RowMainDisasterChip(
 fun MainDisasterChip(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    text: String = emptyString(),
-    onClicked: (String) -> Unit = {},
+    disasterType: DisasterType = DisasterType(),
+    onClicked: (DisasterType) -> Unit = {},
 ) {
     val containerColor =
         if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
@@ -65,7 +65,7 @@ fun MainDisasterChip(
         modifier = modifier
             .clip(CircleShape)
             .background(containerColor)
-            .clickable { onClicked(text) }
+            .clickable { onClicked(disasterType) }
             .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -76,7 +76,7 @@ fun MainDisasterChip(
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(
-            text = text,
+            text = disasterType.name,
             style = MaterialTheme.typography.labelLarge.copy(color = contentColor)
         )
     }
@@ -88,8 +88,8 @@ fun MainDisasterChip(
 fun PreviewRowMainDisasterChip() {
     GigihFinalProjectTheme {
         Surface {
-            val items = (0..9).map { "Banjir" }
-            RowMainDisasterChip(items = items)
+//            val items = (0..9).map { "Banjir" }
+//            RowMainDisasterChip(items = items)
         }
     }
 }
@@ -103,11 +103,11 @@ fun PreviewMainDisasterChip() {
             Column {
                 MainDisasterChip(
                     modifier = Modifier.padding(16.dp),
-                    text = "Banjir"
+                    disasterType = DisasterType()
                 )
                 MainDisasterChip(
                     modifier = Modifier.padding(16.dp),
-                    text = "Banjir",
+                    disasterType = DisasterType(),
                     selected = true
                 )
 

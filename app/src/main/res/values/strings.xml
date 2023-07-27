@@ -7,10 +7,85 @@
     <string name="desc_close_bottom_sheet">Close Bottom Sheet</string>
     <string name="desc_back_to_home_screen">Back to home screen</string>
     <string name="label_settings">Settings</string>
-    <string name="flood">Banjir</string>
-    <string name="earthquake">Gempa Bumi</string>
-    <string name="fire">Kebakaran</string>
-    <string name="haze">Kabut</string>
-    <string name="wind">Angin Topan</string>
-    <string name="volcano">Gunung Meletus</string>
+
+    <!--  Disaster List  -->
+    <string-array name="disaster_names">
+        <item>Banjir</item>
+        <item>Gempa Bumi</item>
+        <item>Kebakaran</item>
+        <item>Kabut</item>
+        <item>Angin Topan</item>
+        <item>Gunung Meletus</item>
+    </string-array>
+
+    <string-array name="disaster_codes">
+        <item>flood</item>
+        <item>earth</item>
+        <item>fire</item>
+        <item>haze</item>
+        <item>wind</item>
+        <item>volcano</item>
+    </string-array>
+
+    <!--  Province List  -->
+    <string-array name="province_names">
+        <item>Jawa Timur</item>
+        <item>Kalimantan Timur</item>
+        <item>Nusa Tenggara Timur</item>
+        <item>Gorontalo</item>
+        <item>DKI Jakarta</item>
+        <item>Jambi</item>
+        <item>Lampung</item>
+        <item>Maluku</item>
+        <item>Kalimantan Utara</item>
+        <item>Maluku Utara</item>
+        <item>Sulawesi Utara</item>
+        <item>Sumatera Utara</item>
+        <item>Papua</item>
+        <item>Riau</item>
+        <item>Kepulauan Riau</item>
+        <item>Sulawesi Tenggara</item>
+        <item>Kalimantan Selatan</item>
+        <item>Sulawesi Selatan</item>
+        <item>Sumatera Selatan</item>
+        <item>DI Yogyakarta</item>
+        <item>Jawa Barat</item>
+        <item>Kalimantan Barat</item>
+        <item>Nusa Tenggara Barat</item>
+        <item>Papua Barat</item>
+        <item>Sulawesi Barat</item>
+        <item>Sumatera Barat</item>
+    </string-array>
+
+    <string-array name="province_codes">
+        <item>ID-JI</item>
+        <item>ID-KI</item>
+        <item>ID-NT</item>
+        <item>ID-GO</item>
+        <item>ID-JK</item>
+        <item>ID-JA</item>
+        <item>ID-LA</item>
+        <item>ID-MA</item>
+        <item>ID-KU</item>
+        <item>ID-MU</item>
+        <item>ID-SA</item>
+        <item>ID-SU</item>
+        <item>ID-PA</item>
+        <item>ID-RI</item>
+        <item>ID-KR</item>
+        <item>ID-SG</item>
+        <item>ID-KS</item>
+        <item>ID-SN</item>
+        <item>ID-SS</item>
+        <item>ID-YO</item>
+        <item>ID-JB</item>
+        <item>ID-KB</item>
+        <item>ID-NB</item>
+        <item>ID-PB</item>
+        <item>ID-SR</item>
+        <item>ID-SB</item>
+    </string-array>
+
+
+    <string name="code_aceh">ID-AC</string>
 </resources>

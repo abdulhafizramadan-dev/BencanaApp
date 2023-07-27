@@ -2,6 +2,7 @@ package com.ahr.gigihfinalproject.domain.interactor
 
 import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.DisasterType
+import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.domain.repository.DisasterRepository
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
@@ -18,5 +19,13 @@ class HomeInteractor @Inject constructor(private val disasterRepository: Disaste
 
     override fun getDisasterReport(disasterType: DisasterType): Flow<Resource<List<DisasterGeometry>>> {
         return disasterRepository.getDisasterReport(disasterType)
+    }
+
+    override fun getProvinces(query: String): Flow<List<Province>> {
+        return disasterRepository.getProvinces(query)
+    }
+
+    override fun getDisasterFilter(): Flow<List<DisasterType>> {
+        return disasterRepository.getDisasterFilter()
     }
 }
