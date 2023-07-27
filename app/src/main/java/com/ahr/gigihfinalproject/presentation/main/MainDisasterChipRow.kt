@@ -33,7 +33,7 @@ fun RowMainDisasterChip(
     modifier: Modifier = Modifier,
     selected: DisasterType? = null,
     items: List<DisasterType> = emptyList(),
-    onChipClicked: (DisasterType) -> Unit = {}
+    onChipClicked: (DisasterType?) -> Unit = {}
 ) {
     LazyRow(
         modifier = modifier,
@@ -55,7 +55,7 @@ fun MainDisasterChip(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     disasterType: DisasterType = DisasterType(),
-    onClicked: (DisasterType) -> Unit = {},
+    onClicked: (DisasterType?) -> Unit = {},
 ) {
     val containerColor =
         if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
@@ -65,7 +65,10 @@ fun MainDisasterChip(
         modifier = modifier
             .clip(CircleShape)
             .background(containerColor)
-            .clickable { onClicked(disasterType) }
+            .clickable {
+                val disaster = if (!selected) disasterType else null
+                onClicked(disaster)
+            }
             .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

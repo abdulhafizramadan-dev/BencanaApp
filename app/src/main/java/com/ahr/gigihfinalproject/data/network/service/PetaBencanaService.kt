@@ -10,7 +10,18 @@ interface PetaBencanaService {
     suspend fun getLatestDisasterInformation(): DisasterReportResponse
 
     @GET("reports")
-    suspend fun getDisasterReport(
+    suspend fun getDisasterReportFilterByDisaster(
+        @Query("disaster") disaster: String
+    ): DisasterReportResponse
+
+    @GET("reports")
+    suspend fun getDisasterReportFilterByLocation(
+        @Query("admin") admin: String,
+    ): DisasterReportResponse
+
+    @GET("reports")
+    suspend fun getDisasterReportFilterByDisasterAndLocation(
+        @Query("admin") admin: String,
         @Query("disaster") disaster: String
     ): DisasterReportResponse
 

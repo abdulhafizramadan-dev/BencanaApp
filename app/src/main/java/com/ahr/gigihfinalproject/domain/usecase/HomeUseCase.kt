@@ -10,8 +10,9 @@ interface HomeUseCase {
 
     fun getLatestDisasterInformation(): Flow<Resource<List<DisasterGeometry>>>
 
-    fun getDisasterReport(
-        disasterType: DisasterType
+    fun getDisasterReportWithFilter(
+        province: Province?,
+        disasterType: DisasterType?,
     ): Flow<Resource<List<DisasterGeometry>>>
 
     fun getProvinces(query: String): Flow<List<Province>>

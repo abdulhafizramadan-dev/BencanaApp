@@ -2,6 +2,7 @@ package com.ahr.gigihfinalproject.presentation.main
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -136,6 +137,8 @@ fun MainScreen(
                     CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5)
                 )
             }
+        } else if (disasterReports is Resource.Error) {
+            Toast.makeText(context, "Error: ${disasterReports.error.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -165,6 +168,9 @@ fun MainScreen(
         mainViewModel.updateProvinceSearchHint(hint = searchHint)
         mainViewModel.updateProvinceSearchQuery(query = it)
         mainViewModel.searchProvinces(query = it)
+        if (it.isEmpty()) {
+            mainViewModel.updateSelectedProvince()
+        }
     }
 
     val onSettingsIconClicked: () -> Unit = { navigator.navigate(SettingsScreenDestination()) }
@@ -176,10 +182,13 @@ fun MainScreen(
         mainViewModel.updateProvinceSearchHint(hint = it.name)
         mainViewModel.updateProvinceSearchQuery(query = it.name)
         mainViewModel.updateMainHeaderSectionState(MainHeaderSectionState.DEFAULT)
+        mainViewModel.updateSelectedProvince(it)
+        mainViewModel.getDisasterReportWithFilter()
     }
 
-    val onDisasterClicked: (DisasterType) -> Unit = {
+    val onDisasterClicked: (DisasterType?) -> Unit = {
         mainViewModel.updateSelectedDisasterFilter(it)
+        mainViewModel.getDisasterReportWithFilter()
         disasterMarker.clear()
     }
 
@@ -234,7 +243,7 @@ fun MainContent(
     onProvinceClicked: (Province) -> Unit = {},
     selectedDisaster: DisasterType? = null,
     disasterItems: List<DisasterType> = emptyList(),
-    onDisasterClicked: (DisasterType) -> Unit = {},
+    onDisasterClicked: (DisasterType?) -> Unit = {},
     cameraPositionState: CameraPositionState = rememberCameraPositionState(),
     mapsProperties: MapProperties = MapProperties(),
     mapsUiSettings: MapUiSettings = MapUiSettings(),

@@ -17,8 +17,11 @@ class HomeInteractor @Inject constructor(private val disasterRepository: Disaste
         return disasterRepository.getLatestDisasterInformation()
     }
 
-    override fun getDisasterReport(disasterType: DisasterType): Flow<Resource<List<DisasterGeometry>>> {
-        return disasterRepository.getDisasterReport(disasterType)
+    override fun getDisasterReportWithFilter(
+        province: Province?,
+        disasterType: DisasterType?
+    ): Flow<Resource<List<DisasterGeometry>>> {
+        return disasterRepository.getDisasterReportWithFilter(province, disasterType)
     }
 
     override fun getProvinces(query: String): Flow<List<Province>> {

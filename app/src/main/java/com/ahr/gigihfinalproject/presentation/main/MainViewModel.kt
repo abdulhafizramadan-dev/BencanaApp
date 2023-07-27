@@ -3,6 +3,7 @@ package com.ahr.gigihfinalproject.presentation.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahr.gigihfinalproject.domain.model.DisasterType
+import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
 import com.ahr.gigihfinalproject.util.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,6 +55,18 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         }
     }
 
+    fun getDisasterReportWithFilter() {
+        viewModelScope.launch {
+            val selectedProvince = _homeScreenUiState.value.selectedProvince
+            val selectedDisasterFilter = _homeScreenUiState.value.selectedDisasterFilter
+            homeUseCase.getDisasterReportWithFilter(selectedProvince, selectedDisasterFilter).collect {
+                _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                    latestDisasterInformations = it
+                )
+            }
+        }
+    }
+
     fun updateMainHeaderSectionState(state: MainHeaderSectionState) {
         _homeScreenUiState.value = _homeScreenUiState.value.copy(
             mainHeaderSectionState = state
@@ -72,7 +85,13 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         )
     }
 
-    fun updateSelectedDisasterFilter(disasterType: DisasterType) {
+    fun updateSelectedProvince(province: Province? = null) {
+        _homeScreenUiState.value = _homeScreenUiState.value.copy(
+            selectedProvince = province
+        )
+    }
+
+    fun updateSelectedDisasterFilter(disasterType: DisasterType? = null) {
         _homeScreenUiState.value = _homeScreenUiState.value.copy(
             selectedDisasterFilter = disasterType
         )
@@ -91,6 +110,5 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
                 }
         }
     }
-
 
 }

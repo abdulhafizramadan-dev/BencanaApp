@@ -32,9 +32,17 @@ class DisasterRepositoryImpl @Inject constructor(
         emit(Resource.Error(it, emptyList()))
     }
 
-    override fun getDisasterReport(disasterType: DisasterType): Flow<Resource<List<DisasterGeometry>>> = flow<Resource<List<DisasterGeometry>>> {
+    override fun getDisasterReportWithFilter(
+        province: Province?,
+        disasterType: DisasterType?
+    ): Flow<Resource<List<DisasterGeometry>>> = flow<Resource<List<DisasterGeometry>>> {
         emit(Resource.Loading)
-        val disasterReportResult = petaBencanaService.getDisasterReport(disasterType.code)
+        val disasterReportResult = when {
+            province != null && disasterType != null -> petaBencanaService.getDisasterReportFilterByDisasterAndLocation(province.code, disasterType.code)
+            province != null -> petaBencanaService.getDisasterReportFilterByLocation(province.code)
+            disasterType != null -> petaBencanaService.getDisasterReportFilterByDisaster(disasterType.code)
+            else -> petaBencanaService.getLatestDisasterInformation()
+        }
         val disasterGeometries = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries
             ?.map { disasterGeometriesItem -> disasterGeometriesItem.toDomain() }
         emit(Resource.Success(disasterGeometries ?: emptyList()))
