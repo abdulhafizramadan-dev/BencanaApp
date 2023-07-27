@@ -41,6 +41,7 @@ android {
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -91,6 +92,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.31.5-beta")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

@@ -17,12 +17,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.domain.model.DisasterProperties
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
+import com.ahr.gigihfinalproject.util.toDisasterTimeFormat
 
 @Composable
 fun LatestDisasterItem(
@@ -66,13 +69,16 @@ fun LatestDisasterItem(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Source: ${disasterProperties.source}",
+                text = stringResource(R.string.format_disaster_source, disasterProperties.source),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Type: ${disasterProperties.disasterType}",
+                    text = stringResource(
+                        R.string.format_disaster_type,
+                        disasterProperties.disasterType
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                     maxLines = 1,
@@ -80,7 +86,7 @@ fun LatestDisasterItem(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "23 Minute ago",
+                    text = disasterProperties.createdAt.toDisasterTimeFormat(),
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

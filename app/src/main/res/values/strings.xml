@@ -90,4 +90,6 @@
 
 
     <string name="code_aceh">ID-AC</string>
+    <string name="format_disaster_type">Tipe: %1$s</string>
+    <string name="format_disaster_source">Sumber: %1$s</string>
 </resources>
