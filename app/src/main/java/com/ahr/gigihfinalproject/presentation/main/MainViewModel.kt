@@ -2,6 +2,7 @@ package com.ahr.gigihfinalproject.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
@@ -17,6 +18,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "MainViewModel"
+
 @HiltViewModel
 class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : ViewModel() {
 
@@ -28,9 +31,9 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
             getDisasterFilters()
             searchProvinces()
             delay(2000L)
-            getLatestDisasterInformations()
+            getDisasterFilterTimePeriodPreference()
+//            getLatestDisastersInformation()
         }
-
     }
 
     private fun getDisasterFilters() {
@@ -45,11 +48,34 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         }
     }
 
-    private fun getLatestDisasterInformations() {
+    private fun getLatestDisastersInformation(
+        timePeriod: DisasterFilterTimePeriod
+    ) {
         viewModelScope.launch {
-            homeUseCase.getLatestDisasterInformation().collect {
+            homeUseCase.getLatestDisasterInformation(timePeriod = timePeriod).collect {
                 _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                    latestDisasterInformations = it
+                    latestDisastersInformation = it
+                )
+            }
+        }
+    }
+
+    private fun getDisasterFilterTimePeriodPreference() {
+        viewModelScope.launch {
+            homeUseCase.getDisasterFilterTimePeriodPreference().collect {
+                getDisasterFilterTimePeriods(it)
+                if (it != null) {
+                    getLatestDisastersInformation(timePeriod = it)
+                }
+            }
+        }
+    }
+
+    private fun getDisasterFilterTimePeriods(selectedDisasterFilterTimePeriod: DisasterFilterTimePeriod? = null) {
+        viewModelScope.launch {
+            homeUseCase.getDisasterTimePeriodFilter(selectedDisasterFilterTimePeriod).collect {
+                _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                    disasterFilterTimePeriods = it
                 )
             }
         }
@@ -59,11 +85,18 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         viewModelScope.launch {
             val selectedProvince = _homeScreenUiState.value.selectedProvince
             val selectedDisasterFilter = _homeScreenUiState.value.selectedDisasterFilter
-            homeUseCase.getDisasterReportWithFilter(selectedProvince, selectedDisasterFilter).collect {
+            val selectedDisasterTimePeriod = _homeScreenUiState.value.selectedDisasterTimePeriod
+            homeUseCase.getDisasterReportWithFilter(timePeriod = selectedDisasterTimePeriod, province = selectedProvince, disasterType = selectedDisasterFilter, ).collect {
                 _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                    latestDisasterInformations = it
+                    latestDisastersInformation = it
                 )
             }
+        }
+    }
+
+    fun updateDisasterFilterTimePeriodPreference(disasterFilterTimePeriod: DisasterFilterTimePeriod) {
+        viewModelScope.launch {
+            homeUseCase.updateDisasterFilterTimePeriodPreference(disasterFilterTimePeriod)
         }
     }
 
@@ -91,6 +124,12 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         )
     }
 
+    fun updateSelectedDisasterFilterTimePeriod(disasterFilterTimePeriod: DisasterFilterTimePeriod? = null) {
+        _homeScreenUiState.value = _homeScreenUiState.value.copy(
+            selectedDisasterTimePeriod = disasterFilterTimePeriod
+        )
+    }
+
     fun updateSelectedDisasterFilter(disasterType: DisasterType? = null) {
         _homeScreenUiState.value = _homeScreenUiState.value.copy(
             selectedDisasterFilter = disasterType
@@ -110,5 +149,7 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
                 }
         }
     }
+
+
 
 }

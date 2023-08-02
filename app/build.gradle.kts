@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.material2)
     implementation(libs.material3)
 
+    implementation("androidx.compose.material:material-icons-extended")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
@@ -95,6 +97,9 @@ dependencies {
 
     implementation("com.valentinilk.shimmer:compose-shimmer:1.0.5")
 
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.0")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:option:1.2.0")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.2")
 
     testImplementation(libs.junit)
@@ -104,6 +109,9 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
 }
 
 kapt {

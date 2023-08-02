@@ -8,6 +8,36 @@
     <string name="desc_back_to_home_screen">Back to home screen</string>
     <string name="label_settings">Settings</string>
 
+    <string name="today_disaster_period_name">Hari ini</string>
+
+    <string name="default_disaster_timeperiod_name">Tiga hari yang lalu</string>
+    <integer name="default_disaster_timeperiod_second">259200</integer>
+
+    <!--  Disaster Time Period Names  -->
+    <string-array name="disaster_time_period_names">
+        <item>Hari ini</item>
+        <item>Satu hari yang lalu</item>
+        <item>Dua hari yang lalu</item>
+        <item>Tiga hari yang lalu</item>
+        <item>Empat hari yang lalu</item>
+        <item>Lima hari yang lalu</item>
+        <item>Enam hari yang lalu</item>
+        <item>Satu minggu yang lalu</item>
+    </string-array>
+
+    <!--  Disaster Time Period Seconds  -->
+    <integer-array name="disaster_time_period_seconds">
+        <item>0</item>
+        <item>86400</item>
+        <item>172800</item>
+        <item>259200</item>
+        <item>345600</item>
+        <item>432000</item>
+        <item>518400</item>
+        <item>604800</item>
+    </integer-array>
+
+
     <!--  Disaster List  -->
     <string-array name="disaster_names">
         <item>Banjir</item>
@@ -92,4 +122,11 @@
     <string name="code_aceh">ID-AC</string>
     <string name="format_disaster_type">Tipe: %1$s</string>
     <string name="format_disaster_source">Sumber: %1$s</string>
+    <string name="desc_open_date_picker">Open date picke</string>
+    <string name="desc_close_search_bar">Close search bar</string>
+    <string name="desc_open_filter_dropdown">Buka filter dropdown</string>
+    <string name="label_cancel">Batal</string>
+    <string name="label_choose">Pilih</string>
+    <string name="desc_filter_disaster_timeperiod">Filter bencana berdasarkan waktu</string>
+    <string name="label_header_dialog_filter_disaster_timeperiod">Filter bencana berdasarkan periode waktu</string>
 </resources>

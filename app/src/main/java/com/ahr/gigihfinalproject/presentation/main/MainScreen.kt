@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,9 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahr.gigihfinalproject.R
+import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.model.Resource
@@ -56,12 +60,21 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.maxkeppeker.sheets.core.models.base.Header
+import com.maxkeppeker.sheets.core.models.base.IconSource
+import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
+import com.maxkeppeler.sheets.option.OptionDialog
+import com.maxkeppeler.sheets.option.models.DisplayMode
+import com.maxkeppeler.sheets.option.models.Option
+import com.maxkeppeler.sheets.option.models.OptionConfig
+import com.maxkeppeler.sheets.option.models.OptionSelection
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 @ExperimentalFoundationApi
 @SuppressLint("MissingPermission")
@@ -83,16 +96,28 @@ fun MainScreen(
     val provinceSearchQuery = mainScreenUiState.provinceSearchQuery
     val selectedProvince = mainScreenUiState.selectedProvince
     val selectedDisaster = mainScreenUiState.selectedDisasterFilter
+    val disasterFilterTimePeriods = mainScreenUiState.disasterFilterTimePeriods
     val disasterFilters = mainScreenUiState.disasterFilters
-    val disasterReports = mainScreenUiState.latestDisasterInformations
+    val disasterReports = mainScreenUiState.latestDisastersInformation
     val provinceList = mainScreenUiState.provinceList
+
+    val disasterTimePeriodOptions = disasterFilterTimePeriods.map { Option(titleText = it.name, selected = it.selected) }
+
+    val hint = stringResource(id = R.string.hint_search_here)
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
 
+    val optionDialogState = rememberUseCaseState()
+
     LaunchedEffect(key1 = Unit) {
-        mainViewModel.updateProvinceSearchHint(context.getString(R.string.hint_search_here))
+        if (selectedProvince == null) {
+            scope.launch {
+                delay(500L)
+                mainViewModel.updateProvinceSearchHint(context.getString(R.string.hint_search_here))
+            }
+        }
     }
 
     val disasterMarker = remember { mutableStateListOf<LatLng>() }
@@ -136,13 +161,18 @@ fun MainScreen(
                 disasterMarker.add(position)
                 boundsBuilder.include(position)
             }
+            if (disasterCoordinates.isEmpty()) return@LaunchedEffect
             scope.launch {
                 delay(1000L)
                 cameraPositionState.animate(
                     CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5)
                 )
             }
-        } else if (disasterReports is Resource.Error) {
+        }
+    }
+
+    LaunchedEffect(key1 = disasterReports) {
+        if (disasterReports is Resource.Error) {
             Toast.makeText(context, "Error: ${disasterReports.error.message}", Toast.LENGTH_SHORT).show()
         }
     }
@@ -169,8 +199,6 @@ fun MainScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val onProvinceQueryChanged: (String) -> Unit = {
-        val searchHint = it.ifEmpty { context.getString(R.string.hint_search_here) }
-        mainViewModel.updateProvinceSearchHint(hint = searchHint)
         mainViewModel.updateProvinceSearchQuery(query = it)
         mainViewModel.searchProvinces(query = it)
         if (it.isEmpty()) {
@@ -179,6 +207,18 @@ fun MainScreen(
     }
 
     val onSettingsIconClicked: () -> Unit = { navigator.navigate(SettingsScreenDestination()) }
+
+    val onBackIconClicked: () -> Unit = {
+        mainViewModel.updateMainHeaderSectionState(MainHeaderSectionState.DEFAULT)
+        if (provinceSearchQuery.isEmpty()) {
+            mainViewModel.getDisasterReportWithFilter()
+        }
+        if (selectedProvince == null) {
+            mainViewModel.updateProvinceSearchHint(context.getString(R.string.hint_search_here))
+            mainViewModel.updateProvinceSearchQuery("")
+            mainViewModel.searchProvinces()
+        }
+    }
 
     val onDoneImeClicked: () -> Unit = { keyboardController?.hide() }
 
@@ -196,12 +236,36 @@ fun MainScreen(
         mainViewModel.getDisasterReportWithFilter()
     }
 
+    val onDisasterTimePeriodIconClicked: () -> Unit = {
+        optionDialogState.show()
+    }
+
+    val onChooseButtonDisasterTimePeriodClicked: (DisasterFilterTimePeriod?) -> Unit = {
+        mainViewModel.updateSelectedDisasterFilterTimePeriod(it)
+        if (it != null) {
+            mainViewModel.updateDisasterFilterTimePeriodPreference(it)
+            mainViewModel.getDisasterReportWithFilter()
+        }
+    }
+
     BackHandler(enabled = mainHeaderSectionState == MainHeaderSectionState.FOCUS) {
         mainViewModel.updateMainHeaderSectionState(MainHeaderSectionState.DEFAULT)
         if (selectedProvince == null) {
             mainViewModel.getDisasterReportWithFilter()
         }
     }
+
+    OptionDialog(
+        state = optionDialogState,
+        header = Header.Default(
+            icon = IconSource(imageVector = Icons.Default.CalendarMonth),
+            title = stringResource(R.string.label_header_dialog_filter_disaster_timeperiod)
+        ),
+        selection = OptionSelection.Single(disasterTimePeriodOptions) { index, _ ->
+            onChooseButtonDisasterTimePeriodClicked(disasterFilterTimePeriods[index])
+        },
+        config = OptionConfig(mode = DisplayMode.LIST)
+    )
 
     BottomSheetScaffold(
         sheetContent = {
@@ -221,9 +285,12 @@ fun MainScreen(
             state = mainHeaderSectionState,
             onStateChanged = mainViewModel::updateMainHeaderSectionState,
             placeholder = provinceSearchHint,
+            hint = hint,
             provinceSearchQuery = provinceSearchQuery,
             onProvinceQueryChanged = onProvinceQueryChanged,
+            onDisasterTimePeriodFilterIconClicked = onDisasterTimePeriodIconClicked,
             onSettingsIconClicked = onSettingsIconClicked,
+            onBackIconClicked = onBackIconClicked,
             onDoneImeClicked = onDoneImeClicked,
             onProvinceClicked = onProvinceClicked,
             provinceList = provinceList,
@@ -248,9 +315,12 @@ fun MainContent(
     state: MainHeaderSectionState = MainHeaderSectionState.DEFAULT,
     onStateChanged: (MainHeaderSectionState) -> Unit = {},
     placeholder: String = emptyString(),
+    hint: String = emptyString(),
     provinceSearchQuery: String = emptyString(),
     onProvinceQueryChanged: (String) -> Unit = {},
+    onDisasterTimePeriodFilterIconClicked: () -> Unit = {},
     onSettingsIconClicked: () -> Unit = {},
+    onBackIconClicked: () -> Unit = {},
     onDoneImeClicked: () -> Unit = {},
     provinceList: List<Province> = emptyList(),
     onProvinceClicked: (Province) -> Unit = {},
@@ -262,7 +332,7 @@ fun MainContent(
     mapsUiSettings: MapUiSettings = MapUiSettings(),
     latLngLists: List<LatLng> = emptyList(),
     focusRequester: FocusRequester = FocusRequester.Default,
-    selectedProvince: Province? = null
+    selectedProvince: Province? = null,
 ) {
 
     BoxWithConstraints(modifier = modifier) {
@@ -300,9 +370,12 @@ fun MainContent(
             state = state,
             onStateChanged = onStateChanged,
             placeholder = placeholder,
+            hint = hint,
             query = provinceSearchQuery,
             onProvinceQueryChanged = onProvinceQueryChanged,
             onSettingsIconClicked = onSettingsIconClicked,
+            onDisasterTimePeriodFilterClicked = onDisasterTimePeriodFilterIconClicked,
+            onBackIconClicked = onBackIconClicked,
             onDoneImeClicked = onDoneImeClicked,
             onProvinceClicked = onProvinceClicked,
             provinceList = provinceList,

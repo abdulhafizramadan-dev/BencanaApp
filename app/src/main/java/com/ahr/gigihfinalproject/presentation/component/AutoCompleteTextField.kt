@@ -58,15 +58,21 @@ fun <T> AutoCompleteTextField(
     onDoneClicked: () -> Unit = {},
     predictions: List<T> = emptyList(),
     focusRequester: FocusRequester,
+    leadingIcon: @Composable () -> Unit = {},
     itemContent: @Composable (T) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
+    val heightModifier = if (predictions.size >= 8) {
+        Modifier.fillMaxHeight(.4f)
+    } else {
+        Modifier
+    }
     LazyColumn(
         state = lazyListState,
         modifier = modifier
             .clip(RoundedCornerShape(size = 4.dp))
             .fillMaxWidth()
-            .fillMaxHeight(0.4f)
+            .then(heightModifier)
     ) {
         stickyHeader {
             TextFieldAutoComplete(
@@ -75,7 +81,8 @@ fun <T> AutoCompleteTextField(
                 onValueChanged = onValueChanged,
                 onClearClicked = onClearClicked,
                 onDoneClicked = onDoneClicked,
-                focusRequester = focusRequester
+                focusRequester = focusRequester,
+                leadingIcon = leadingIcon
             )
         }
         if (predictions.isNotEmpty()) {
@@ -95,6 +102,7 @@ private fun TextFieldAutoComplete(
     onValueChanged: (String) -> Unit = {},
     onClearClicked: () -> Unit = {},
     onDoneClicked: () -> Unit = {},
+    leadingIcon: @Composable () -> Unit = {},
     focusRequester: FocusRequester
 ) {
     TextField(
@@ -131,7 +139,8 @@ private fun TextFieldAutoComplete(
             imeAction = ImeAction.Done,
             capitalization = KeyboardCapitalization.Words
         ),
-        keyboardActions = KeyboardActions(onDone = { onDoneClicked() })
+        keyboardActions = KeyboardActions(onDone = { onDoneClicked() }),
+        leadingIcon = leadingIcon
     )
 }
 

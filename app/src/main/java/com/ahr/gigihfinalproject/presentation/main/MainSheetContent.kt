@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -44,10 +44,20 @@ fun MainSheetContent(
     latestDisasters: Resource<List<DisasterGeometry>> = Resource.Idling
 ) {
     val headerPadding = if (isExpanded) 0.dp else 16.dp
+    val contentModifier = if (latestDisasters is Resource.Success) {
+        if (latestDisasters.data.isNotEmpty()) {
+            Modifier.fillMaxHeight()
+        } else {
+            Modifier.height(396.dp)
+        }
+    } else {
+        Modifier
+    }
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = contentModifier
+            .fillMaxWidth()
             .padding(top = 16.dp)
+            .then(modifier)
     ) {
         Divider(
             modifier = Modifier

@@ -6,23 +6,28 @@ import retrofit2.http.Query
 
 interface PetaBencanaService {
 
-    @GET("reports?timeperiod=172800")
-    suspend fun getLatestDisasterInformation(): DisasterReportResponse
-
-    @GET("reports?timeperiod=604800")
-    suspend fun getDisasterReportFilterByDisaster(
-        @Query("disaster") disaster: String
+    @GET("reports")
+    suspend fun getLatestDisasterInformation(
+        @Query("timeperiod") timePeriod: Long
     ): DisasterReportResponse
 
-    @GET("reports?timeperiod=604800")
+    @GET("reports")
+    suspend fun getDisasterReportFilterByDisaster(
+        @Query("disaster") disaster: String,
+        @Query("timeperiod") timePeriod: Long
+    ): DisasterReportResponse
+
+    @GET("reports")
     suspend fun getDisasterReportFilterByLocation(
         @Query("admin") admin: String,
+        @Query("timeperiod") timePeriod: Long
     ): DisasterReportResponse
 
-    @GET("reports?timeperiod=604800")
+    @GET("reports")
     suspend fun getDisasterReportFilterByDisasterAndLocation(
         @Query("admin") admin: String,
-        @Query("disaster") disaster: String
+        @Query("disaster") disaster: String,
+        @Query("timeperiod") timePeriod: Long
     ): DisasterReportResponse
 
 }

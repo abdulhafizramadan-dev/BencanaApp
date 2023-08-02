@@ -3,7 +3,6 @@ package com.ahr.gigihfinalproject.presentation.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -58,9 +59,12 @@ fun MainHeaderSection(
     state: MainHeaderSectionState = MainHeaderSectionState.DEFAULT,
     onStateChanged: (MainHeaderSectionState) -> Unit = {},
     placeholder: String = emptyString(),
+    hint: String = emptyString(),
     query: String = emptyString(),
     onProvinceQueryChanged: (String) -> Unit = {},
+    onDisasterTimePeriodFilterClicked: () -> Unit = {},
     onSettingsIconClicked: () -> Unit = {},
+    onBackIconClicked: () -> Unit = {},
     onDoneImeClicked: () -> Unit = {},
     onProvinceClicked: (Province) -> Unit = {},
     selectedProvince: Province? = null,
@@ -70,22 +74,23 @@ fun MainHeaderSection(
     Column {
         when (state) {
             MainHeaderSectionState.DEFAULT -> MainHeaderTextFieldDefault(
-                modifier,
-                onStateChanged,
-                placeholder,
-                onSettingsIconClicked
+                modifier = modifier,
+                onStateChanged = onStateChanged,
+                placeholder = placeholder,
+                onSettingsIconClicked = onSettingsIconClicked,
+                onTimePeriodFilterClicked = onDisasterTimePeriodFilterClicked
             )
-
             MainHeaderSectionState.FOCUS -> MainHeaderTextFieldActive(
-                modifier,
-                placeholder,
-                query,
-                onProvinceQueryChanged,
-                onDoneImeClicked,
-                onProvinceClicked,
-                provinceList,
-                focusRequester,
-                selectedProvince
+                modifier = modifier,
+                hint = hint,
+                value = query,
+                onValueChanged = onProvinceQueryChanged,
+                onDoneClicked = onDoneImeClicked,
+                onItemClicked = onProvinceClicked,
+                predictions = provinceList,
+                focusRequester = focusRequester,
+                selectedProvince = selectedProvince,
+                onBackIconClicked = onBackIconClicked
             )
         }
     }
@@ -96,31 +101,47 @@ fun MainHeaderTextFieldDefault(
     modifier: Modifier = Modifier,
     onStateChanged: (MainHeaderSectionState) -> Unit = {},
     placeholder: String = emptyString(),
+    onTimePeriodFilterClicked: () -> Unit = {},
     onSettingsIconClicked: () -> Unit = {},
 ) {
-    Box(
+    Row(
         modifier = modifier
             .shadow(8.dp, shape = CircleShape)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surface)
             .height(50.dp)
             .fillMaxWidth()
-            .clickable { onStateChanged(MainHeaderSectionState.FOCUS) }
+            .clickable { onStateChanged(MainHeaderSectionState.FOCUS) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = placeholder,
-            style = MaterialTheme.typography.labelLarge.copy(
+            style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5F)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6F)
             ),
             modifier = Modifier
-                .align(Alignment.CenterStart)
+                .weight(1f)
                 .padding(start = 16.dp)
         )
 
+        Spacer(modifier = Modifier.width(4.dp))
+
+        IconButton(
+            onClick = onTimePeriodFilterClicked,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.FilterList,
+                contentDescription = stringResource(R.string.desc_open_filter_dropdown),
+                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(4.dp)
+            )
+        }
+
         IconButton(
             onClick = onSettingsIconClicked,
-            modifier = Modifier.align(Alignment.CenterEnd)
         ) {
             Icon(
                 imageVector = Icons.Outlined.Settings,
@@ -133,7 +154,7 @@ fun MainHeaderTextFieldDefault(
                     .padding(4.dp)
             )
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(2.dp))
     }
 }
 
@@ -142,7 +163,7 @@ fun MainHeaderTextFieldDefault(
 @Composable
 fun MainHeaderTextFieldActive(
     modifier: Modifier = Modifier,
-    placeholder: String = emptyString(),
+    hint: String = emptyString(),
     value: String = emptyString(),
     onValueChanged: (String) -> Unit = {},
     onDoneClicked: () -> Unit = {},
@@ -150,19 +171,28 @@ fun MainHeaderTextFieldActive(
     predictions: List<Province>,
     focusRequester: FocusRequester,
     selectedProvince: Province?,
+    onBackIconClicked: () -> Unit = {}
 ) {
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
     }
     AutoCompleteTextField(
         modifier = modifier.fillMaxWidth(),
-        placeholder = placeholder,
+        placeholder = hint,
         value = value,
         onValueChanged = onValueChanged,
         onClearClicked = { onValueChanged("") },
         onDoneClicked = onDoneClicked,
         predictions = predictions,
-        focusRequester = focusRequester
+        focusRequester = focusRequester,
+        leadingIcon = {
+            IconButton(onClick = onBackIconClicked) {
+                Icon(
+                    imageVector = Icons.Outlined.ArrowBack,
+                    contentDescription = stringResource(R.string.desc_close_search_bar)
+                )
+            }
+        }
     ) { province ->
         val container = if (province.code == selectedProvince?.code) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background
         val content = if (province.code == selectedProvince?.code) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
@@ -191,6 +221,9 @@ fun PreviewMainHeaderSection() {
             val keyboardController = LocalSoftwareKeyboardController.current
             var state by remember { mutableStateOf(MainHeaderSectionState.DEFAULT) }
             var value by remember { mutableStateOf("") }
+            val focusRequester = remember {
+                FocusRequester()
+            }
 
             MainHeaderSection(
                 modifier = Modifier
@@ -204,7 +237,8 @@ fun PreviewMainHeaderSection() {
                 onSettingsIconClicked = {},
                 onDoneImeClicked = { keyboardController?.hide() },
                 onProvinceClicked = { keyboardController?.hide() },
-                provinceList = emptyList()
+                provinceList = emptyList(),
+                focusRequester = focusRequester
             )
         }
     }
