@@ -5,8 +5,26 @@
 
 [Demo Youtube](https://youtu.be/FGBRncG_s6M)
 
+## Introduction
+
 Halo semua nya perkenalkan saya `Abdul Hafiz Ramadan` dengan id `GG3MEGP0532`, peserta generasi GIGIH 3.0 dengan learning track mobile engineer, kelas ME 14. Disini saya mempresentasikan aplikasi BencanaApp yang merupakan final task dari generasi  gigih 3.0.
 
+## BencanaApp
+Disaster Map adalah aplikasi yang membantu pengguna untuk mengawasi berbagai bencana alam yang terjadi di Indonesia, seperti banjir, gempa bumi, kebakaran, kabut asap, angin kencang, dan aktivitas gunung berapi. Aplikasi ini menawarkan informasi real-time tentang bencana-bencana tersebut, sehingga pengguna dapat mengetahui data terkini. Selain itu, aplikasi ini juga memiliki preferensi notifikasi. Jika preferensi notifikasi diaktifkan, pengguna akan mendapatkan notifikasi tepat waktu tentang daerah yang terdampak banjir di Jakarta, dengan menyajikan status banjir secara real-time.
+
+## Features
+Aplikasi bencana app memiliki fitur utama:
+ - Menampilkan daftar bencana dalam periode waktu tertentu
+ - Memfilter bencana seperti :(banjir, gempa bumi, kebakaran,
+ - kabut asap, gunung berapi, dll) ✅
+ - Memfilter bencana berdasarkan area ✅
+ - Menampilkan bencana di dalam peta ✅
+ - Notifikasi berdasarkan ketinggian air
+ - Mendukung tema terang/gelap ✅
+ - Mendukung animasi loading ✅
+
+
+## Dependencies
 Aplikasi bencapa app dibangun menggunakan: 
 |Nama| Versi |
 |--|--|
@@ -23,19 +41,22 @@ Aplikasi bencapa app dibangun menggunakan:
 | desugar_jdk_libs_nio | 2.0.2 |
 | Retrofit 2 | 2.9.0 |
 | Gson | 2.9.0 |
-bahasa pemrograman kotlin dan menggunakan jetpack compose sebagai UI Toolkit nya. 
 
-Aplikasi bencana app adalah sebuah aplikasi yang dirancang untuk membantu pengguna dalam menghadapi situasi bencana alam. Aplikasi ini menyediakan informasi terkini tentang jenis, lokasi, dan dampak bencana yang terjadi di sekitar pengguna. 
+# Getting Started
 
-Aplikasi bencana app memiliki fitur utama:
+## Prerequisites
+- Android Studio Giraffe | 2022.3.1 Canary 11
+- MinSdk 24
 
- - Menampilkan daftar bencana dalam periode waktu tertentu
- - Memfilter bencana seperti :(banjir, gempa bumi, kebakaran,
- - kabut asap, gunung berapi, dll) ✅
- - Memfilter bencana berdasarkan area ✅
- - Menampilkan bencana di dalam peta ✅
- - Notifikasi berdasarkan ketinggian air
- - Mendukung tema terang/gelap ✅
- - Mendukung animasi loading ✅
+## Clone Project
+Untuk memulai proyek, kloning proyek menggunakan perintah berikut:
+```
+git clone https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan.git
+```
 
-> Written with [StackEdit](https://stackedit.io/).
+## Set Up Google Maps API Key
+Sebelum menjalankan aplikasi, Anda perlu mendapatkan Google Maps API Key dari [sini](https://developers.google.com/maps/documentation/android-sdk/get-api-key). 
+Tambahkan Kunci Google Maps API dan URL Peta Bencana API ke file local.properties di proyek.
+```
+MAPS_API_KEY={ADD_YOUR_API_KEY}
+```
