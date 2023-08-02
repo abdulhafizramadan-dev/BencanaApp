@@ -60,3 +60,6 @@ Tambahkan Kunci Google Maps API dan URL Peta Bencana API ke file local.propertie
 ```
 MAPS_API_KEY={ADD_YOUR_API_KEY}
 ```
+
+## Screenshots
+<img src="screenshots/home.jpg" width="25%"> <img src="screenshots/provinsi.jpg" width="25%">  <img src="screenshots/bottomsheet-full.jpg" width="25%">  <img src="screenshots/settings.jpg" width="25%">
