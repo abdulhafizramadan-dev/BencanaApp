@@ -100,6 +100,8 @@ dependencies {
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.0")
     implementation("com.maxkeppeler.sheets-compose-dialogs:option:1.2.0")
 
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.2")
 
     testImplementation(libs.junit)
