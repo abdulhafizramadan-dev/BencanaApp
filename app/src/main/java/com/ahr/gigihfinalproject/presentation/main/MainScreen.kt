@@ -45,7 +45,9 @@ import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.model.Resource
+import com.ahr.gigihfinalproject.domain.model.UserTheme
 import com.ahr.gigihfinalproject.presentation.destinations.SettingsScreenDestination
+import com.ahr.gigihfinalproject.presentation.settings.SettingsViewModel
 import com.ahr.gigihfinalproject.util.emptyString
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -53,6 +55,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -89,7 +92,12 @@ fun MainScreen(
 ) {
 
     val mainViewModel = hiltViewModel<MainViewModel>()
+    val settingsViewModel = hiltViewModel<SettingsViewModel>()
+
+    var isDarkMode by remember { mutableStateOf(false) }
+
     val mainScreenUiState by mainViewModel.homeScreenUiState.collectAsState()
+    val userTheme by settingsViewModel.userTheme.collectAsState()
 
     val mainHeaderSectionState = mainScreenUiState.mainHeaderSectionState
     val provinceSearchHint = mainScreenUiState.provinceSearchHint
@@ -110,6 +118,13 @@ fun MainScreen(
     val focusRequester = remember { FocusRequester() }
 
     val optionDialogState = rememberUseCaseState()
+
+    LaunchedEffect(key1 = userTheme) {
+        isDarkMode = when (userTheme) {
+            UserTheme.Dark -> true
+            else -> false
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
         if (selectedProvince == null) {
@@ -139,14 +154,21 @@ fun MainScreen(
     val boundsBuilder: LatLngBounds.Builder by remember {
         mutableStateOf(LatLngBounds.builder())
     }
+
     val cameraPositionState = rememberCameraPositionState()
+
+    val mapStyleOptions = if (isDarkMode) {
+        MapStyleOptions.loadRawResourceStyle(context, R.raw.dark_google_maps_style)
+    } else null
+
     val mapsUiSettings = MapUiSettings(
         zoomControlsEnabled = false,
         compassEnabled = true,
-        myLocationButtonEnabled = myLocationActive
+        myLocationButtonEnabled = myLocationActive,
     )
     val mapsProperties = MapProperties(
-        isMyLocationEnabled = myLocationActive
+        isMyLocationEnabled = myLocationActive,
+        mapStyleOptions = mapStyleOptions
     )
 
     LaunchedEffect(key1 = disasterReports) {
@@ -343,7 +365,7 @@ fun MainContent(
             properties = mapsProperties,
             uiSettings = mapsUiSettings,
             cameraPositionState = cameraPositionState,
-            contentPadding = PaddingValues(start = 6.dp, top = 146.dp, end = 6.dp, bottom = 24.dp)
+            contentPadding = PaddingValues(start = 6.dp, top = 146.dp, end = 6.dp, bottom = 24.dp),
 
         ) {
             latLngLists.forEach {
