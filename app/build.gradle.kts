@@ -85,6 +85,10 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
+    // Inject Dependency to WorkManager
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation("com.google.android.gms:play-services-maps:18.1.0")
@@ -101,6 +105,8 @@ dependencies {
     implementation("com.maxkeppeler.sheets-compose-dialogs:option:1.2.0")
 
     implementation("com.airbnb.android:lottie-compose:6.1.0")
+
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.2")
 

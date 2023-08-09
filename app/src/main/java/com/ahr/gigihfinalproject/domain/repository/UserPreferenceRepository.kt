@@ -6,12 +6,16 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserPreferenceRepository {
 
-    suspend fun updateUserTheme(state: UserTheme)
-
     fun getUserTheme(): Flow<UserTheme>
 
-    suspend fun updateDisasterFilterTimePeriod(disasterFilterTimePeriod: DisasterFilterTimePeriod)
+    suspend fun updateUserTheme(state: UserTheme)
+
+    fun getUserNotificationTmaMonitoringPreference(): Flow<Boolean>
+
+    suspend fun updateUserNotificationTmaMonitoringPreference(state: Boolean)
 
     fun getDisasterFilterTimePeriod(): Flow<DisasterFilterTimePeriod>
+
+    suspend fun updateDisasterFilterTimePeriod(disasterFilterTimePeriod: DisasterFilterTimePeriod)
 
 }

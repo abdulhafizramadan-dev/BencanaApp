@@ -5,8 +5,18 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsUseCase {
 
+    fun getUserTheme(): Flow<UserTheme>
+
     suspend fun updateUserTheme(theme: UserTheme)
 
-    fun getUserTheme(): Flow<UserTheme>
+    fun getUserNotificationTmaMonitoringPreference(): Flow<Boolean>
+
+    suspend fun updateUserNotificationTmaMonitoringPreference(state: Boolean)
+
+    suspend fun runOneTimeTmaMonitor()
+
+    suspend fun runPeriodicTmaMonitor()
+
+    suspend fun cancelPeriodicTmaMonitor()
 
 }

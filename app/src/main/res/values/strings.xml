@@ -129,4 +129,5 @@
     <string name="label_choose">Pilih</string>
     <string name="desc_filter_disaster_timeperiod">Filter bencana berdasarkan waktu</string>
     <string name="label_header_dialog_filter_disaster_timeperiod">Filter bencana berdasarkan periode waktu</string>
+    <string name="content_tma_monitoring_format">Status %1$s pada tanggal %2$s di %3$s</string>
 </resources>

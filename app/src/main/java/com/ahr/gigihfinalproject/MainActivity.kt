@@ -18,9 +18,11 @@ import com.ahr.gigihfinalproject.domain.model.UserTheme
 import com.ahr.gigihfinalproject.presentation.NavGraphs
 import com.ahr.gigihfinalproject.presentation.settings.SettingsViewModel
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalPermissionsApi
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @AndroidEntryPoint
@@ -32,9 +34,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val settingsViewModel = hiltViewModel<SettingsViewModel>()
             val userTheme by settingsViewModel.userTheme.collectAsState()
+
             val isDarkTheme = userTheme == UserTheme.Dark
+
             GigihFinalProjectTheme(darkTheme = isDarkTheme) {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

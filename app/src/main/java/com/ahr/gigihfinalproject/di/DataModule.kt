@@ -3,6 +3,7 @@ package com.ahr.gigihfinalproject.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.work.WorkManager
 import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.data.network.service.PetaBencanaService
 import com.ahr.gigihfinalproject.data.preference.dataStore
@@ -88,6 +89,14 @@ object DataModule {
         @ApplicationContext context: Context
     ): DataStore<Preferences> {
         return context.dataStore
+    }
+
+    @Singleton
+    @Provides
+    fun provideWorkManager(
+        @ApplicationContext context: Context
+    ): WorkManager {
+        return WorkManager.getInstance(context)
     }
 
 }

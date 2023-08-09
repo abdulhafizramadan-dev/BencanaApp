@@ -3,6 +3,7 @@ package com.ahr.gigihfinalproject.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -24,8 +25,16 @@ class UserPreferenceRepositoryImpl @Inject constructor(
 ) : UserPreferenceRepository {
 
     private val userTheme = stringPreferencesKey("user_theme")
+    private val userNotificationBaseWaterSetting = booleanPreferencesKey("user_notification_base_water_setting")
     private val disasterFilterTimePeriodName = stringPreferencesKey("disaster_filter_timeperiod_name")
     private val disasterFilterTimePeriodSecond = longPreferencesKey("disaster_filter_timeperiod_second")
+
+    override fun getUserTheme(): Flow<UserTheme> {
+        return userPreferences.data.map { preferences ->
+            val userTheme = preferences[userTheme] ?: UserTheme.Light.name
+            UserTheme.valueOf(userTheme)
+        }
+    }
 
     override suspend fun updateUserTheme(state: UserTheme) {
         userPreferences.edit { preferences ->
@@ -33,10 +42,16 @@ class UserPreferenceRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserTheme(): Flow<UserTheme> {
+    override fun getUserNotificationTmaMonitoringPreference(): Flow<Boolean> {
         return userPreferences.data.map { preferences ->
-            val userTheme = preferences[userTheme] ?: UserTheme.Light.name
-            UserTheme.valueOf(userTheme)
+            val userNotificationBaseWaterSetting = preferences[userNotificationBaseWaterSetting] ?: false
+            userNotificationBaseWaterSetting
+        }
+    }
+
+    override suspend fun updateUserNotificationTmaMonitoringPreference(state: Boolean) {
+        userPreferences.edit { preferences ->
+            preferences[userNotificationBaseWaterSetting] = state
         }
     }
 

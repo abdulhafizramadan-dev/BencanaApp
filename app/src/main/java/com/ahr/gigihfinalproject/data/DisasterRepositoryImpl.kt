@@ -10,6 +10,7 @@ import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.model.Resource
+import com.ahr.gigihfinalproject.domain.model.TmaMonitoringGeometries
 import com.ahr.gigihfinalproject.domain.repository.DisasterRepository
 import com.ahr.gigihfinalproject.util.getCurrentTimeSeconds
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -124,4 +125,13 @@ class DisasterRepositoryImpl @Inject constructor(
                 }
             emit(disasterFilterTimePeriod)
         }
+
+    override fun getTmaMonitoring(): Flow<Resource<List<TmaMonitoringGeometries>>> = flow<Resource<List<TmaMonitoringGeometries>>> {
+        emit(Resource.Loading)
+        val tmaMonitoringProperties = petaBencanaService.getTmaMonitoring().result?.objects?.output?.geometries
+            ?.map { it.toDomain() } ?: emptyList()
+        emit(Resource.Success(tmaMonitoringProperties))
+    }.catch {
+        emit(Resource.Error(it, emptyList()))
+    }
 }

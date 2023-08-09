@@ -1,5 +1,6 @@
 package com.ahr.gigihfinalproject.presentation.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +27,9 @@ import com.ahr.gigihfinalproject.util.emptyString
 fun SettingsContent(
     modifier: Modifier = Modifier,
     userTheme: UserTheme = UserTheme.Default,
-    updateUserTheme: (UserTheme) -> Unit
+    updateUserTheme: (UserTheme) -> Unit,
+    userNotificationBaseWaterSetting: Boolean,
+    updateUserNotificationBaseWaterSetting: (Boolean) -> Unit
 ) {
 
     val isDarkMode = userTheme == UserTheme.Dark
@@ -35,13 +38,21 @@ fun SettingsContent(
         updateUserTheme(userTheme)
     }
 
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.padding(all = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         SettingItem(
-            modifier = Modifier.padding(16.dp),
             title = "Dark Mode",
-            subtitle = "Enable dark mode",
+            subtitle = "Aktifkan dark mode",
             state = isDarkMode,
             onStateChange = updateDarkMode
+        )
+        SettingItem(
+            title = "Notifikasi",
+            subtitle = "Aktifkan notifikasi realtime untuk pemantuan tinggi air",
+            state = userNotificationBaseWaterSetting,
+            onStateChange = updateUserNotificationBaseWaterSetting
         )
     }
 }

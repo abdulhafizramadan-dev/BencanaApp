@@ -16,8 +16,11 @@ class SettingsViewModel @Inject constructor(
     private val settingsUseCase: SettingsUseCase
 ) : ViewModel() {
 
-    private val _userTheme = MutableStateFlow<UserTheme>(UserTheme.Default)
+    private val _userTheme = MutableStateFlow(UserTheme.Default)
     val userTheme get() = _userTheme.asStateFlow()
+
+    private val _userNotificationTmaMonitoringPreference = MutableStateFlow(false)
+    val userNotificationTmaMonitoringPreference get() = _userNotificationTmaMonitoringPreference.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -25,11 +28,40 @@ class SettingsViewModel @Inject constructor(
                 _userTheme.value = it
             }
         }
+        viewModelScope.launch {
+            settingsUseCase.getUserNotificationTmaMonitoringPreference().collectLatest {
+                _userNotificationTmaMonitoringPreference.value = it
+            }
+        }
     }
 
     fun updateUserTheme(theme: UserTheme) {
         viewModelScope.launch {
             settingsUseCase.updateUserTheme(theme = theme)
+        }
+    }
+
+    fun updateUserNotificationBaseWaterSetting(state: Boolean) {
+        viewModelScope.launch {
+            settingsUseCase.updateUserNotificationTmaMonitoringPreference(state)
+        }
+    }
+
+    fun runFirstTmaMonitoring() {
+        viewModelScope.launch {
+            settingsUseCase.runOneTimeTmaMonitor()
+        }
+    }
+
+    fun runPeriodicTmaMonitoring() {
+        viewModelScope.launch {
+            settingsUseCase.runPeriodicTmaMonitor()
+        }
+    }
+
+    fun cancelNotificationBaseWaterWorker() {
+        viewModelScope.launch {
+            settingsUseCase.cancelPeriodicTmaMonitor()
         }
     }
 

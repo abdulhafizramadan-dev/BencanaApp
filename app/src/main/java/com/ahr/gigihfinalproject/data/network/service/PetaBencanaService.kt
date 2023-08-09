@@ -1,6 +1,7 @@
 package com.ahr.gigihfinalproject.data.network.service
 
 import com.ahr.gigihfinalproject.data.network.response.DisasterReportResponse
+import com.ahr.gigihfinalproject.data.network.response.TmaMonitoringResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -29,5 +30,8 @@ interface PetaBencanaService {
         @Query("disaster") disaster: String,
         @Query("timeperiod") timePeriod: Long
     ): DisasterReportResponse
+
+    @GET("floodgauges")
+    suspend fun getTmaMonitoring(): TmaMonitoringResponse
 
 }
