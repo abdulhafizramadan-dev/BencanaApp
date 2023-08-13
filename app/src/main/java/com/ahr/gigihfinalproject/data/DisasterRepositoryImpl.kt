@@ -36,7 +36,7 @@ class DisasterRepositoryImpl @Inject constructor(
 
     override fun getLatestDisasterInformation(
         timePeriod: DisasterFilterTimePeriod,
-    ): Flow<Resource<List<DisasterGeometry>>> = flow<Resource<List<DisasterGeometry>>> {
+    ): Flow<Resource<List<DisasterGeometry>>> = flow {
 
         emit(Resource.Loading)
 
@@ -61,6 +61,7 @@ class DisasterRepositoryImpl @Inject constructor(
         province: Province?,
         disasterType: DisasterType?,
     ): Flow<Resource<List<DisasterGeometry>>> = flow<Resource<List<DisasterGeometry>>> {
+
         emit(Resource.Loading)
 
         val defaultTimePeriodSecond = context.resources.getInteger(R.integer.default_disaster_timeperiod_second).toLong()

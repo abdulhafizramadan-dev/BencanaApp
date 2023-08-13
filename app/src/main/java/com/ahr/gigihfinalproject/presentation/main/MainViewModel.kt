@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
+import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
 import com.ahr.gigihfinalproject.util.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val TAG = "MainViewModel"
-
 @HiltViewModel
 class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : ViewModel() {
 
@@ -32,7 +31,6 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
             searchProvinces()
             delay(2000L)
             getDisasterFilterTimePeriodPreference()
-//            getLatestDisastersInformation()
         }
     }
 
@@ -52,10 +50,22 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         timePeriod: DisasterFilterTimePeriod
     ) {
         viewModelScope.launch {
-            homeUseCase.getLatestDisasterInformation(timePeriod = timePeriod).collect {
-                _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                    latestDisastersInformation = it
-                )
+            homeUseCase.getLatestDisasterInformation(timePeriod = timePeriod).collect { result ->
+                when (result) {
+                    Resource.Idling -> {}
+                    Resource.Loading -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                        disasterGeometryState = DisasterGeometryState.Loading,
+                        latestDisastersInformation = emptyList()
+                    )
+                    is Resource.Error -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                        disasterGeometryState = DisasterGeometryState.Error,
+                        latestDisastersInformation = result.data ?: emptyList()
+                    )
+                    is Resource.Success -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                        disasterGeometryState = DisasterGeometryState.Success,
+                        latestDisastersInformation = result.data
+                    )
+                }
             }
         }
     }
@@ -82,14 +92,31 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
     }
 
     fun getDisasterReportWithFilter() {
+        val selectedProvince = _homeScreenUiState.value.selectedProvince
+        val selectedDisasterFilter = _homeScreenUiState.value.selectedDisasterFilter
+        val selectedDisasterTimePeriod = _homeScreenUiState.value.selectedDisasterTimePeriod
+
         viewModelScope.launch {
-            val selectedProvince = _homeScreenUiState.value.selectedProvince
-            val selectedDisasterFilter = _homeScreenUiState.value.selectedDisasterFilter
-            val selectedDisasterTimePeriod = _homeScreenUiState.value.selectedDisasterTimePeriod
-            homeUseCase.getDisasterReportWithFilter(timePeriod = selectedDisasterTimePeriod, province = selectedProvince, disasterType = selectedDisasterFilter, ).collect {
-                _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                    latestDisastersInformation = it
-                )
+            homeUseCase.getDisasterReportWithFilter(
+                timePeriod = selectedDisasterTimePeriod,
+                province = selectedProvince,
+                disasterType = selectedDisasterFilter
+            ).collect { result ->
+                when (result) {
+                    Resource.Idling -> {}
+                    Resource.Loading -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                        disasterGeometryState = DisasterGeometryState.Loading,
+                        latestDisastersInformation = emptyList()
+                    )
+                    is Resource.Error -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                        disasterGeometryState = DisasterGeometryState.Error,
+                        latestDisastersInformation = result.data ?: emptyList()
+                    )
+                    is Resource.Success -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                        disasterGeometryState = DisasterGeometryState.Success,
+                        latestDisastersInformation = result.data
+                    )
+                }
             }
         }
     }

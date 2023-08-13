@@ -44,7 +44,6 @@ import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
-import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.domain.model.UserTheme
 import com.ahr.gigihfinalproject.presentation.destinations.SettingsScreenDestination
 import com.ahr.gigihfinalproject.presentation.settings.SettingsViewModel
@@ -106,6 +105,7 @@ fun MainScreen(
     val selectedDisaster = mainScreenUiState.selectedDisasterFilter
     val disasterFilterTimePeriods = mainScreenUiState.disasterFilterTimePeriods
     val disasterFilters = mainScreenUiState.disasterFilters
+    val disasterGeometryState = mainScreenUiState.disasterGeometryState
     val disasterReports = mainScreenUiState.latestDisastersInformation
     val provinceList = mainScreenUiState.provinceList
 
@@ -172,9 +172,9 @@ fun MainScreen(
     )
 
     LaunchedEffect(key1 = disasterReports) {
-        if (disasterReports is Resource.Success) {
+        if (disasterReports.isNotEmpty()) {
             disasterMarker.clear()
-            val disasterCoordinates = disasterReports.data.map { it.coordinates }
+            val disasterCoordinates = disasterReports.map { it.coordinates }
             disasterCoordinates.forEach { coordinates ->
                 val position = LatLng(
                     coordinates[1],
@@ -194,8 +194,8 @@ fun MainScreen(
     }
 
     LaunchedEffect(key1 = disasterReports) {
-        if (disasterReports is Resource.Error) {
-            Toast.makeText(context, "Error: ${disasterReports.error.message}", Toast.LENGTH_SHORT).show()
+        if (disasterGeometryState == DisasterGeometryState.Error) {
+            Toast.makeText(context, "Error: Ups ada error nih server kami...", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -291,10 +291,11 @@ fun MainScreen(
 
     BottomSheetScaffold(
         sheetContent = {
-            MainSheetContent(
+            MainSheetScreen(
                 isExpanded = isExpanded,
                 onCloseIconClicked = { scope.launch { scaffoldState.bottomSheetState.collapse() } },
-                latestDisasters = disasterReports
+                latestDisasters = disasterReports,
+                disasterGeometryState = disasterGeometryState
             )
         },
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),

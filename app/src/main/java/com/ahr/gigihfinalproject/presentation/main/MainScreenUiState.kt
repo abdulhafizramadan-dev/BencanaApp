@@ -4,8 +4,11 @@ import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
-import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.util.emptyString
+
+enum class DisasterGeometryState {
+    Loading, Success, Error;
+}
 
 data class MainScreenUiState(
     val mainHeaderSectionState: MainHeaderSectionState = MainHeaderSectionState.DEFAULT,
@@ -17,6 +20,7 @@ data class MainScreenUiState(
     val disasterFilters: List<DisasterType> = emptyList(),
     val disasterFilterTimePeriods: List<DisasterFilterTimePeriod> = emptyList(),
     val provinceList: List<Province> = emptyList(),
-    val latestDisastersInformation: Resource<List<DisasterGeometry>> = Resource.Idling,
-    val isDisasterFilterTimePeriodShow: Boolean = false
+    val disasterGeometryState: DisasterGeometryState = DisasterGeometryState.Loading,
+    val latestDisastersInformation: List<DisasterGeometry> = emptyList(),
+    val isDisasterFilterTimePeriodShow: Boolean = false,
 )
