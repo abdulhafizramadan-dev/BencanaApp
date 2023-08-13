@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,12 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
+import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
 import com.ahr.gigihfinalproject.domain.model.UserTheme
 import com.ahr.gigihfinalproject.presentation.destinations.SettingsScreenDestination
 import com.ahr.gigihfinalproject.presentation.settings.SettingsViewModel
 import com.ahr.gigihfinalproject.util.emptyString
+import com.ahr.gigihfinalproject.util.toDisasterTimeFormat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
@@ -74,6 +75,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -135,8 +137,6 @@ fun MainScreen(
         }
     }
 
-    val disasterMarker = remember { mutableStateListOf<LatLng>() }
-
     var myLocationActive by remember {
         mutableStateOf(false)
     }
@@ -170,26 +170,6 @@ fun MainScreen(
         isMyLocationEnabled = myLocationActive,
         mapStyleOptions = mapStyleOptions
     )
-
-    LaunchedEffect(key1 = disasterReports) {
-        disasterMarker.clear()
-        val disasterCoordinates = disasterReports.map { it.coordinates }
-        disasterCoordinates.forEach { coordinates ->
-            val position = LatLng(
-                coordinates[1],
-                coordinates[0],
-            )
-            disasterMarker.add(position)
-            boundsBuilder.include(position)
-        }
-        if (disasterCoordinates.isEmpty()) return@LaunchedEffect
-        scope.launch {
-            delay(1000L)
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5)
-            )
-        }
-    }
 
     LaunchedEffect(key1 = disasterReports) {
         if (disasterGeometryState == DisasterGeometryState.Error) {
@@ -321,9 +301,11 @@ fun MainScreen(
             cameraPositionState = cameraPositionState,
             mapsProperties = mapsProperties,
             mapsUiSettings = mapsUiSettings,
-            latLngLists = disasterMarker,
             focusRequester = focusRequester,
-            selectedProvince = selectedProvince
+            selectedProvince = selectedProvince,
+            disasterReports = disasterReports,
+            cameraLatLngBounds = boundsBuilder,
+            scope = scope
         )
     }
 }
@@ -351,11 +333,12 @@ fun MainContent(
     cameraPositionState: CameraPositionState = rememberCameraPositionState(),
     mapsProperties: MapProperties = MapProperties(),
     mapsUiSettings: MapUiSettings = MapUiSettings(),
-    latLngLists: List<LatLng> = emptyList(),
     focusRequester: FocusRequester = FocusRequester.Default,
     selectedProvince: Province? = null,
+    disasterReports: List<DisasterGeometry> = emptyList(),
+    cameraLatLngBounds: LatLngBounds.Builder = LatLngBounds.Builder(),
+    scope: CoroutineScope = rememberCoroutineScope(),
 ) {
-
     BoxWithConstraints(modifier = modifier) {
         GoogleMap(
             modifier = Modifier
@@ -367,9 +350,30 @@ fun MainContent(
             contentPadding = PaddingValues(start = 6.dp, top = 146.dp, end = 6.dp, bottom = 24.dp),
 
         ) {
-            latLngLists.forEach {
-                Marker(state = MarkerState(position = it))
+            val disasterCoordinates = disasterReports.map { it.coordinates }
+            disasterCoordinates.forEachIndexed { index, coordinates ->
+                val disaster = disasterReports[index].disasterProperties
+                val position = LatLng(
+                    coordinates[1],
+                    coordinates[0],
+                )
+                cameraLatLngBounds.include(position)
+                Marker(
+                    state = MarkerState(position = position),
+                    title = disaster.disasterType,
+                    snippet = disaster.createdAt.toDisasterTimeFormat()
+                )
             }
+            if (disasterReports.isEmpty()) return@GoogleMap
+            LaunchedEffect(key1 = disasterReports) {
+                scope.launch {
+                    delay(1000L)
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngBounds(cameraLatLngBounds.build(), 5)
+                    )
+                }
+            }
+
         }
 
         RowMainDisasterChip(
