@@ -2,6 +2,7 @@ package com.ahr.gigihfinalproject.presentation.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -55,6 +56,7 @@ fun MainSheetScreen(
     onCloseIconClicked: () -> Unit = {},
     disasterGeometryState: DisasterGeometryState = DisasterGeometryState.Loading,
     latestDisasters: List<DisasterGeometry> = emptyList(),
+    onDisasterItemClicked: (DisasterGeometry) -> Unit = {}
 ) {
     val headerPadding = if (isExpanded) 0.dp else 16.dp
     val contentModifier = if (latestDisasters.isNotEmpty()) {
@@ -69,7 +71,9 @@ fun MainSheetScreen(
 
     Column(
         modifier = contentModifier
-            .animateContentSize()
+            .animateContentSize(
+                animationSpec = spring()
+            )
             .fillMaxWidth()
             .padding(top = 16.dp)
             .then(modifier)
@@ -90,6 +94,7 @@ fun MainSheetScreen(
         )
         MainSheetContent(
             disasterReports = latestDisasters,
+            onDisasterItemClicked = onDisasterItemClicked,
             loadingState = isLoading
         )
     }
@@ -131,7 +136,7 @@ fun MainSheetHeaderSuccess(
             IconButton(onClick = onCloseIconClicked,
                 Modifier
                     .padding(end = 8.dp)
-                    .offset(y = 4.dp)) {
+                    .offset(y = 6.dp)) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.desc_close_bottom_sheet)
@@ -176,35 +181,43 @@ fun MainSheetHeaderLoading(
 fun MainSheetContent(
     modifier: Modifier = Modifier,
     disasterReports: List<DisasterGeometry> = emptyList(),
+    onDisasterItemClicked: (DisasterGeometry) -> Unit = {},
     loadingState: Boolean = false
 ) {
     if (loadingState) {
         DisasterListLoading()
         return
     }
-    if (disasterReports.isNotEmpty()) {
-        DisasterListSuccess(
-            disasterReports = disasterReports,
-            modifier = modifier
-        )
-    } else {
+    if (disasterReports.isEmpty()) {
         DisasterListEmpty()
+        return
     }
+    DisasterListSuccess(
+        disasterReports = disasterReports,
+        onDisasterItemClicked = onDisasterItemClicked,
+        modifier = modifier
+    )
 }
 
 @Composable
 fun DisasterListSuccess(
     modifier: Modifier = Modifier,
-    disasterReports: List<DisasterGeometry> = emptyList()
+    disasterReports: List<DisasterGeometry> = emptyList(),
+    onDisasterItemClicked: (DisasterGeometry) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(
+            start = 8.dp,
+            top = 4.dp,
+            end = 8.dp,
+            bottom = 16.dp
+        )
     ) {
-        items(items = disasterReports.map { it.disasterProperties }, key = { it.pkey }) {
+        itemsIndexed(items = disasterReports, key = { index, _ -> index }) { _, item ->
             LatestDisasterItem(
-                disasterProperties = it,
+                disaster = item,
+                onDisasterItemClicked = onDisasterItemClicked
             )
         }
     }

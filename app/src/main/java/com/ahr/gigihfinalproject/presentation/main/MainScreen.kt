@@ -198,6 +198,10 @@ fun MainScreen(
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val onCollapseBottomSheetIconClicked: () -> Unit = {
+        scope.launch { scaffoldState.bottomSheetState.collapse() }
+    }
+
     val onProvinceQueryChanged: (String) -> Unit = {
         mainViewModel.updateProvinceSearchQuery(query = it)
         mainViewModel.searchProvinces(query = it)
@@ -248,6 +252,21 @@ fun MainScreen(
         }
     }
 
+    val onDisasterItemClicked: (DisasterGeometry) -> Unit = {
+        scope.launch {
+            if (scaffoldState.bottomSheetState.isExpanded) {
+                scaffoldState.bottomSheetState.collapse()
+                delay(500L)
+            }
+            val coordinates = it.coordinates
+            val position = LatLng(
+                coordinates[1],
+                coordinates[0],
+            )
+            cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(position, 20F))
+        }
+    }
+
     BackHandler(enabled = mainHeaderSectionState == MainHeaderSectionState.FOCUS) {
         mainViewModel.updateMainHeaderSectionState(MainHeaderSectionState.DEFAULT)
         if (selectedProvince == null) {
@@ -271,9 +290,10 @@ fun MainScreen(
         sheetContent = {
             MainSheetScreen(
                 isExpanded = isExpanded,
-                onCloseIconClicked = { scope.launch { scaffoldState.bottomSheetState.collapse() } },
+                onCloseIconClicked = onCollapseBottomSheetIconClicked,
                 latestDisasters = disasterReports,
-                disasterGeometryState = disasterGeometryState
+                disasterGeometryState = disasterGeometryState,
+                onDisasterItemClicked = onDisasterItemClicked
             )
         },
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -347,8 +367,12 @@ fun MainContent(
             properties = mapsProperties,
             uiSettings = mapsUiSettings,
             cameraPositionState = cameraPositionState,
-            contentPadding = PaddingValues(start = 6.dp, top = 146.dp, end = 6.dp, bottom = 24.dp),
-
+            contentPadding = PaddingValues(
+                start = 6.dp,
+                top = 146.dp,
+                end = 6.dp,
+                bottom = 24.dp
+            ),
         ) {
             val disasterCoordinates = disasterReports.map { it.coordinates }
             disasterCoordinates.forEachIndexed { index, coordinates ->
@@ -373,7 +397,6 @@ fun MainContent(
                     )
                 }
             }
-
         }
 
         RowMainDisasterChip(

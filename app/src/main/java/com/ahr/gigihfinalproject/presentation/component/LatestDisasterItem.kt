@@ -1,6 +1,7 @@
 package com.ahr.gigihfinalproject.presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ahr.gigihfinalproject.R
-import com.ahr.gigihfinalproject.domain.model.DisasterProperties
+import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ahr.gigihfinalproject.util.toDisasterTimeFormat
 import com.valentinilk.shimmer.shimmer
@@ -34,10 +35,14 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun LatestDisasterItem(
     modifier: Modifier = Modifier,
-    disasterProperties: DisasterProperties,
+    disaster: DisasterGeometry,
+    onDisasterItemClicked: (DisasterGeometry) -> Unit = {}
 ) {
+    val disasterProperties = disaster.disasterProperties
     Row(
-        modifier = modifier
+        modifier = modifier.clip(RoundedCornerShape(size = 16.dp))
+            .clickable { onDisasterItemClicked(disaster) }
+            .padding(all = 8.dp)
     ) {
         AsyncImage(
             model = disasterProperties.imageUrl,
