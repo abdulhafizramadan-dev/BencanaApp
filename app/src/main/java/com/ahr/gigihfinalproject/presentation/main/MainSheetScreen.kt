@@ -57,18 +57,16 @@ fun MainSheetScreen(
     latestDisasters: List<DisasterGeometry> = emptyList(),
 ) {
     val headerPadding = if (isExpanded) 0.dp else 16.dp
-    val contentModifier = if (disasterGeometryState == DisasterGeometryState.Success) {
-        if (latestDisasters.isNotEmpty()) {
-            Modifier.fillMaxHeight()
-        } else {
-            Modifier.height(396.dp)
-        }
+    val contentModifier = if (latestDisasters.isNotEmpty()) {
+        Modifier.fillMaxHeight()
     } else {
-        Modifier
+        Modifier.height(396.dp)
     }
+
     val isLoading = remember(key1 = disasterGeometryState) {
         disasterGeometryState == DisasterGeometryState.Loading
     }
+
     Column(
         modifier = contentModifier
             .animateContentSize()

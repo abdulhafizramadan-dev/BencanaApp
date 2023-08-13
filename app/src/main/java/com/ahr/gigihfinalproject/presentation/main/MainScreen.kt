@@ -172,24 +172,22 @@ fun MainScreen(
     )
 
     LaunchedEffect(key1 = disasterReports) {
-        if (disasterReports.isNotEmpty()) {
-            disasterMarker.clear()
-            val disasterCoordinates = disasterReports.map { it.coordinates }
-            disasterCoordinates.forEach { coordinates ->
-                val position = LatLng(
-                    coordinates[1],
-                    coordinates[0],
-                )
-                disasterMarker.add(position)
-                boundsBuilder.include(position)
-            }
-            if (disasterCoordinates.isEmpty()) return@LaunchedEffect
-            scope.launch {
-                delay(1000L)
-                cameraPositionState.animate(
-                    CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5)
-                )
-            }
+        disasterMarker.clear()
+        val disasterCoordinates = disasterReports.map { it.coordinates }
+        disasterCoordinates.forEach { coordinates ->
+            val position = LatLng(
+                coordinates[1],
+                coordinates[0],
+            )
+            disasterMarker.add(position)
+            boundsBuilder.include(position)
+        }
+        if (disasterCoordinates.isEmpty()) return@LaunchedEffect
+        scope.launch {
+            delay(1000L)
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 5)
+            )
         }
     }
 
