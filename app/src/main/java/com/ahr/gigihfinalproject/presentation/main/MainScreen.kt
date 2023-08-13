@@ -245,10 +245,8 @@ fun MainScreen(
     }
 
     val onChooseButtonDisasterTimePeriodClicked: (DisasterFilterTimePeriod?) -> Unit = {
-        mainViewModel.updateSelectedDisasterFilterTimePeriod(it)
         if (it != null) {
             mainViewModel.updateDisasterFilterTimePeriodPreference(it)
-            mainViewModel.getDisasterReportWithFilter()
         }
     }
 

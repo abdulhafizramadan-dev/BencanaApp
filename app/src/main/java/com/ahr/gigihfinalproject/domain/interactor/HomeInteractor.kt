@@ -18,10 +18,6 @@ class HomeInteractor @Inject constructor(
     private val userPreferenceRepository: UserPreferenceRepository
 ): HomeUseCase {
 
-    override fun getLatestDisasterInformation(timePeriod: DisasterFilterTimePeriod): Flow<Resource<List<DisasterGeometry>>> {
-        return disasterRepository.getLatestDisasterInformation(timePeriod = timePeriod)
-    }
-
     override fun getDisasterReportWithFilter(
         timePeriod: DisasterFilterTimePeriod?,
         province: Province?,

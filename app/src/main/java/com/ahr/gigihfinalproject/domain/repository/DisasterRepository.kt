@@ -10,10 +10,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface DisasterRepository {
 
-    fun getLatestDisasterInformation(
-        timePeriod: DisasterFilterTimePeriod
-    ): Flow<Resource<List<DisasterGeometry>>>
-
     fun getDisasterReportWithFilter(
         timePeriod: DisasterFilterTimePeriod?,
         province: Province?,

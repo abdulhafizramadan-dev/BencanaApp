@@ -1,7 +1,6 @@
 package com.ahr.gigihfinalproject.data
 
 import android.content.Context
-import android.util.Log
 import androidx.room.withTransaction
 import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.data.local.GigihFinalProjectDatabase
@@ -23,8 +22,6 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val TAG = "DisasterRepositoryImpl"
-
 @Singleton
 class DisasterRepositoryImpl @Inject constructor(
     private val petaBencanaService: PetaBencanaService,
@@ -34,33 +31,11 @@ class DisasterRepositoryImpl @Inject constructor(
 
     private val disasterGeometryDao get() = gigihFinalProjectDatabase.disasterGeometryDao()
 
-    override fun getLatestDisasterInformation(
-        timePeriod: DisasterFilterTimePeriod,
-    ): Flow<Resource<List<DisasterGeometry>>> = flow {
-
-        emit(Resource.Loading)
-
-        val disasterReportResult = petaBencanaService.getLatestDisasterInformation(timePeriod.timeSecond)
-
-        gigihFinalProjectDatabase.withTransaction {
-            val disasterGeometryEntities = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries?.toEntities()
-            disasterGeometryDao.clearDisasterGeometriesEntities()
-            disasterGeometryDao.upsertDisasterGeometryEntities(disasterGeometryEntities ?: emptyList())
-        }
-
-        val disasterGeometryDomains = disasterGeometryDao.getDisasterGeometriesEntities().toDomains()
-        emit(Resource.Success(disasterGeometryDomains))
-
-    }.catch {
-        val disasterGeometryDomains = disasterGeometryDao.getDisasterGeometriesEntities().toDomains()
-        emit(Resource.Error(it, disasterGeometryDomains))
-    }
-
     override fun getDisasterReportWithFilter(
         timePeriod: DisasterFilterTimePeriod?,
         province: Province?,
         disasterType: DisasterType?,
-    ): Flow<Resource<List<DisasterGeometry>>> = flow<Resource<List<DisasterGeometry>>> {
+    ): Flow<Resource<List<DisasterGeometry>>> = flow {
 
         emit(Resource.Loading)
 
@@ -86,10 +61,26 @@ class DisasterRepositoryImpl @Inject constructor(
 
             else -> petaBencanaService.getLatestDisasterInformation(timePeriod = timePeriodSecond)
         }
-        val disasterGeometries = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries?.toDomains()
-        emit(Resource.Success(disasterGeometries ?: emptyList()))
+
+        // Only save to database when user get disaster with no filter
+        if (province == null && disasterType == null) {
+            gigihFinalProjectDatabase.withTransaction {
+                val disasterGeometryEntities = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries?.toEntities()
+                disasterGeometryDao.clearDisasterGeometriesEntities()
+                disasterGeometryDao.upsertDisasterGeometryEntities(disasterGeometryEntities ?: emptyList())
+            }
+            val disasterGeometryDomains = disasterGeometryDao.getDisasterGeometriesEntities().toDomains()
+            emit(Resource.Success(disasterGeometryDomains))
+        } else {
+            val disasterGeometries = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries?.toDomains()
+            emit(Resource.Success(disasterGeometries ?: emptyList()))
+        }
+
     }.catch {
-        emit(Resource.Error(it, emptyList()))
+        val disasterGeometries = if (province == null && disasterType == null) {
+            disasterGeometryDao.getDisasterGeometriesEntities().toDomains()
+        } else emptyList()
+        emit(Resource.Error(it, disasterGeometries))
     }
 
     override fun getProvinces(query: String): Flow<List<Province>> = flow {
@@ -126,9 +117,6 @@ class DisasterRepositoryImpl @Inject constructor(
             val currentTimeSeconds = getCurrentTimeSeconds()
             val disasterTimePeriodsNames = context.resources.getStringArray(R.array.disaster_time_period_names)
             val disasterTimePeriodsSeconds = context.resources.getIntArray(R.array.disaster_time_period_seconds)
-
-            Log.d(TAG, "getDisasterTimePeriodFilter: Current Time Seconds = $currentTimeSeconds")
-            Log.d(TAG, "getDisasterTimePeriodFilter: Current Time Seconds = $currentTimeSeconds")
 
             val disasterFilterTimePeriod =
                 disasterTimePeriodsNames.mapIndexed { index, periodName ->

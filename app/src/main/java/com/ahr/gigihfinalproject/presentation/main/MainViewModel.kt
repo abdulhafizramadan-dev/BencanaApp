@@ -46,36 +46,13 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         }
     }
 
-    private fun getLatestDisastersInformation(
-        timePeriod: DisasterFilterTimePeriod
-    ) {
-        viewModelScope.launch {
-            homeUseCase.getLatestDisasterInformation(timePeriod = timePeriod).collect { result ->
-                when (result) {
-                    Resource.Idling -> {}
-                    Resource.Loading -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                        disasterGeometryState = DisasterGeometryState.Loading,
-                        latestDisastersInformation = emptyList()
-                    )
-                    is Resource.Error -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                        disasterGeometryState = DisasterGeometryState.Error,
-                        latestDisastersInformation = result.data ?: emptyList()
-                    )
-                    is Resource.Success -> _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                        disasterGeometryState = DisasterGeometryState.Success,
-                        latestDisastersInformation = result.data
-                    )
-                }
-            }
-        }
-    }
-
     private fun getDisasterFilterTimePeriodPreference() {
         viewModelScope.launch {
             homeUseCase.getDisasterFilterTimePeriodPreference().collect {
-                getDisasterFilterTimePeriods(it)
                 if (it != null) {
-                    getLatestDisastersInformation(timePeriod = it)
+                    updateSelectedDisasterFilterTimePeriod(it)
+                    getDisasterFilterTimePeriods(it)
+                    getDisasterReportWithFilter()
                 }
             }
         }
