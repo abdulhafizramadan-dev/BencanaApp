@@ -119,7 +119,46 @@ fun DisasterListContent(
     latestDisasters: Resource<List<DisasterGeometry>>
 ) {
     when (latestDisasters) {
-        is Resource.Error -> {}
+        is Resource.Error -> {
+            if (latestDisasters.data?.isNotEmpty() == true) {
+                LazyColumn(
+                    modifier = modifier,
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(items = latestDisasters.data.map { it.disasterProperties }, key = { it.pkey }) {
+                        LatestDisasterItem(
+                            disasterProperties = it,
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = 8.dp)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_empty_disaster))
+                    Column(verticalArrangement = Arrangement.Center) {
+                        LottieAnimation(
+                            composition = composition,
+                            iterations = Int.MAX_VALUE,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .fillMaxSize(.5f)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Tidak ada bencana yang ditemukan!",
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
         Resource.Idling -> {}
         Resource.Loading -> {
             repeat(5) {

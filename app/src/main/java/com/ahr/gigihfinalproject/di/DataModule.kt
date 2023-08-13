@@ -3,8 +3,10 @@ package com.ahr.gigihfinalproject.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.room.Room
 import androidx.work.WorkManager
 import com.ahr.gigihfinalproject.R
+import com.ahr.gigihfinalproject.data.local.GigihFinalProjectDatabase
 import com.ahr.gigihfinalproject.data.network.service.PetaBencanaService
 import com.ahr.gigihfinalproject.data.preference.dataStore
 import com.chuckerteam.chucker.api.ChuckerCollector
@@ -24,6 +26,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+
+    @Singleton
+    @Provides
+    fun provideGigihFinalProjectDatabase(
+        @ApplicationContext context: Context
+    ): GigihFinalProjectDatabase {
+        return Room.databaseBuilder(
+            context,
+            GigihFinalProjectDatabase::class.java,
+            GigihFinalProjectDatabase.DATABASE_NAME
+        ).build()
+    }
 
     @Singleton
     @Provides

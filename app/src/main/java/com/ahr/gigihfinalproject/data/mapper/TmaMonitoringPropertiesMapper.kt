@@ -8,20 +8,20 @@ import com.ahr.gigihfinalproject.domain.model.TmaMonitoringObservationItem
 import com.ahr.gigihfinalproject.domain.model.TmaMonitoringProperties
 import com.ahr.gigihfinalproject.util.emptyString
 
-fun TmaMonitoringGeometriesItem.toDomain(): TmaMonitoringGeometries =
+fun TmaMonitoringGeometriesItem.toDomains(): TmaMonitoringGeometries =
     TmaMonitoringGeometries(
         type = type ?: emptyString(),
-        properties = properties?.toDomain() ?: TmaMonitoringProperties()
+        properties = properties?.toDomains() ?: TmaMonitoringProperties()
     )
 
-fun TmaMonitoringPropertiesItemResponse.toDomain(): TmaMonitoringProperties =
+fun TmaMonitoringPropertiesItemResponse.toDomains(): TmaMonitoringProperties =
     TmaMonitoringProperties(
         gaugenameid = gaugenameid ?: emptyString(),
         gaugeid = gaugeid ?: emptyString(),
-        observations = observations?.map { it.toDomain() } ?: emptyList()
+        observations = observations?.map { it.toDomains() } ?: emptyList()
     )
 
-fun TmaMonitoringObservationItemResponse.toDomain(): TmaMonitoringObservationItem =
+fun TmaMonitoringObservationItemResponse.toDomains(): TmaMonitoringObservationItem =
     TmaMonitoringObservationItem(
         f1 = f1 ?: emptyString(),
         f2 = f2 ?: 0,

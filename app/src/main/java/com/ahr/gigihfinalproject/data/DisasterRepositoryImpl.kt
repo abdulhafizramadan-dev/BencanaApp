@@ -2,8 +2,11 @@ package com.ahr.gigihfinalproject.data
 
 import android.content.Context
 import android.util.Log
+import androidx.room.withTransaction
 import com.ahr.gigihfinalproject.R
-import com.ahr.gigihfinalproject.data.mapper.toDomain
+import com.ahr.gigihfinalproject.data.local.GigihFinalProjectDatabase
+import com.ahr.gigihfinalproject.data.mapper.toDomains
+import com.ahr.gigihfinalproject.data.mapper.toEntities
 import com.ahr.gigihfinalproject.data.network.service.PetaBencanaService
 import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
@@ -25,19 +28,32 @@ private const val TAG = "DisasterRepositoryImpl"
 @Singleton
 class DisasterRepositoryImpl @Inject constructor(
     private val petaBencanaService: PetaBencanaService,
+    private val gigihFinalProjectDatabase: GigihFinalProjectDatabase,
     @ApplicationContext private val context: Context,
 ) : DisasterRepository {
+
+    private val disasterGeometryDao get() = gigihFinalProjectDatabase.disasterGeometryDao()
 
     override fun getLatestDisasterInformation(
         timePeriod: DisasterFilterTimePeriod,
     ): Flow<Resource<List<DisasterGeometry>>> = flow<Resource<List<DisasterGeometry>>> {
+
         emit(Resource.Loading)
+
         val disasterReportResult = petaBencanaService.getLatestDisasterInformation(timePeriod.timeSecond)
-        val disasterGeometries = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries
-            ?.map { disasterGeometriesItem -> disasterGeometriesItem.toDomain() }
-        emit(Resource.Success(disasterGeometries ?: emptyList()))
+
+        gigihFinalProjectDatabase.withTransaction {
+            val disasterGeometryEntities = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries?.toEntities()
+            disasterGeometryDao.clearDisasterGeometriesEntities()
+            disasterGeometryDao.upsertDisasterGeometryEntities(disasterGeometryEntities ?: emptyList())
+        }
+
+        val disasterGeometryDomains = disasterGeometryDao.getDisasterGeometriesEntities().toDomains()
+        emit(Resource.Success(disasterGeometryDomains))
+
     }.catch {
-        emit(Resource.Error(it, emptyList()))
+        val disasterGeometryDomains = disasterGeometryDao.getDisasterGeometriesEntities().toDomains()
+        emit(Resource.Error(it, disasterGeometryDomains))
     }
 
     override fun getDisasterReportWithFilter(
@@ -69,8 +85,7 @@ class DisasterRepositoryImpl @Inject constructor(
 
             else -> petaBencanaService.getLatestDisasterInformation(timePeriod = timePeriodSecond)
         }
-        val disasterGeometries = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries
-            ?.map { disasterGeometriesItem -> disasterGeometriesItem.toDomain() }
+        val disasterGeometries = disasterReportResult.disasterResult?.disasterObjects?.disasterOutput?.geometries?.toDomains()
         emit(Resource.Success(disasterGeometries ?: emptyList()))
     }.catch {
         emit(Resource.Error(it, emptyList()))
@@ -129,7 +144,7 @@ class DisasterRepositoryImpl @Inject constructor(
     override fun getTmaMonitoring(): Flow<Resource<List<TmaMonitoringGeometries>>> = flow<Resource<List<TmaMonitoringGeometries>>> {
         emit(Resource.Loading)
         val tmaMonitoringProperties = petaBencanaService.getTmaMonitoring().result?.objects?.output?.geometries
-            ?.map { it.toDomain() } ?: emptyList()
+            ?.map { it.toDomains() } ?: emptyList()
         emit(Resource.Success(tmaMonitoringProperties))
     }.catch {
         emit(Resource.Error(it, emptyList()))
