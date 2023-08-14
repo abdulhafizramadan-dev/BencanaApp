@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,6 +111,7 @@ fun MainScreen(
     val disasterGeometryState = mainScreenUiState.disasterGeometryState
     val disasterReports = mainScreenUiState.latestDisastersInformation
     val provinceList = mainScreenUiState.provinceList
+    val isFirstLaunch = mainScreenUiState.isFirstLaunch
 
     val disasterTimePeriodOptions = disasterFilterTimePeriods.map { Option(titleText = it.name, selected = it.selected) }
 
@@ -120,6 +122,10 @@ fun MainScreen(
     val focusRequester = remember { FocusRequester() }
 
     val optionDialogState = rememberUseCaseState()
+
+    SideEffect {
+        mainViewModel.updateIsFirstLaunchState(false)
+    }
 
     LaunchedEffect(key1 = userTheme) {
         isDarkMode = when (userTheme) {
@@ -133,6 +139,18 @@ fun MainScreen(
             scope.launch {
                 delay(500L)
                 mainViewModel.updateProvinceSearchHint(context.getString(R.string.hint_search_here))
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        settingsViewModel.getUserTheme()
+        if (isFirstLaunch) {
+            scope.launch {
+                mainViewModel.getDisasterFilters()
+                mainViewModel.searchProvinces()
+                delay(2000L)
+                mainViewModel.getDisasterFilterTimePeriodPreference()
             }
         }
     }

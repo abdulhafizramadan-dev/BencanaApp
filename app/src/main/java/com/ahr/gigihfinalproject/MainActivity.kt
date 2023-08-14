@@ -9,6 +9,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,8 +33,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
+
             val settingsViewModel = hiltViewModel<SettingsViewModel>()
             val userTheme by settingsViewModel.userTheme.collectAsState()
+
+            LaunchedEffect(key1 = Unit) {
+                settingsViewModel.getUserTheme()
+            }
 
             val isDarkTheme = userTheme == UserTheme.Dark
 

@@ -22,12 +22,15 @@ class SettingsViewModel @Inject constructor(
     private val _userNotificationTmaMonitoringPreference = MutableStateFlow(false)
     val userNotificationTmaMonitoringPreference get() = _userNotificationTmaMonitoringPreference.asStateFlow()
 
-    init {
+    fun getUserTheme() {
         viewModelScope.launch {
             settingsUseCase.getUserTheme().collectLatest {
                 _userTheme.value = it
             }
         }
+    }
+
+    fun getUserNotificationTmaMonitoring() {
         viewModelScope.launch {
             settingsUseCase.getUserNotificationTmaMonitoringPreference().collectLatest {
                 _userNotificationTmaMonitoringPreference.value = it

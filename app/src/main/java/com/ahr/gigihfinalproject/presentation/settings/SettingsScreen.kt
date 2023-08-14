@@ -38,6 +38,11 @@ fun SettingsScreen(
 
     val notificationPermission = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
+    LaunchedEffect(key1 = Unit) {
+        settingsViewModel.getUserTheme()
+        settingsViewModel.getUserNotificationTmaMonitoring()
+    }
+
     LaunchedEffect(key1 = userNotificationTmaMonitoringPreference) {
         if (userNotificationTmaMonitoringPreference) {
             settingsViewModel.runFirstTmaMonitoring()

@@ -9,13 +9,9 @@ import com.ahr.gigihfinalproject.domain.model.Resource
 import com.ahr.gigihfinalproject.domain.usecase.HomeUseCase
 import com.ahr.gigihfinalproject.util.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,28 +21,17 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
     private val _homeScreenUiState = MutableStateFlow(MainScreenUiState())
     val homeScreenUiState get() = _homeScreenUiState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            getDisasterFilters()
-            searchProvinces()
-            delay(2000L)
-            getDisasterFilterTimePeriodPreference()
-        }
-    }
-
-    private fun getDisasterFilters() {
+    fun getDisasterFilters() {
         viewModelScope.launch {
             homeUseCase.getDisasterFilter().collect {
-                homeUseCase.getDisasterFilter().collect {
-                    _homeScreenUiState.value = _homeScreenUiState.value.copy(
-                        disasterFilters = it
-                    )
-                }
+                _homeScreenUiState.value = _homeScreenUiState.value.copy(
+                    disasterFilters = it
+                )
             }
         }
     }
 
-    private fun getDisasterFilterTimePeriodPreference() {
+    fun getDisasterFilterTimePeriodPreference() {
         viewModelScope.launch {
             homeUseCase.getDisasterFilterTimePeriodPreference().collect {
                 if (it != null) {
@@ -98,6 +83,12 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         }
     }
 
+    fun updateIsFirstLaunchState(state: Boolean) {
+        _homeScreenUiState.value = _homeScreenUiState.value.copy(
+            isFirstLaunch = state
+        )
+    }
+
     fun updateDisasterFilterTimePeriodPreference(disasterFilterTimePeriod: DisasterFilterTimePeriod) {
         viewModelScope.launch {
             homeUseCase.updateDisasterFilterTimePeriodPreference(disasterFilterTimePeriod)
@@ -128,7 +119,7 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         )
     }
 
-    fun updateSelectedDisasterFilterTimePeriod(disasterFilterTimePeriod: DisasterFilterTimePeriod? = null) {
+    private fun updateSelectedDisasterFilterTimePeriod(disasterFilterTimePeriod: DisasterFilterTimePeriod? = null) {
         _homeScreenUiState.value = _homeScreenUiState.value.copy(
             selectedDisasterTimePeriod = disasterFilterTimePeriod
         )
@@ -140,20 +131,14 @@ class MainViewModel @Inject constructor(private val homeUseCase: HomeUseCase) : 
         )
     }
 
-    @OptIn(FlowPreview::class)
     fun searchProvinces(query: String = emptyString()) {
         viewModelScope.launch {
-            homeUseCase.getProvinces(query)
-                .debounce(500)
-                .distinctUntilChanged()
-                .collectLatest {
+            homeUseCase.getProvinces(query).collectLatest {
                     _homeScreenUiState.value = _homeScreenUiState.value.copy(
                         provinceList = it
                     )
                 }
         }
     }
-
-
 
 }

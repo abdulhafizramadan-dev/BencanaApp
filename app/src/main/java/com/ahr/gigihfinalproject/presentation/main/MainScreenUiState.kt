@@ -23,4 +23,5 @@ data class MainScreenUiState(
     val disasterGeometryState: DisasterGeometryState = DisasterGeometryState.Loading,
     val latestDisastersInformation: List<DisasterGeometry> = emptyList(),
     val isDisasterFilterTimePeriodShow: Boolean = false,
+    val isFirstLaunch: Boolean = true
 )
