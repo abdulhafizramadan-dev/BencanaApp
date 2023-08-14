@@ -127,6 +127,10 @@ fun MainScreen(
         mainViewModel.updateIsFirstLaunchState(false)
     }
 
+    LaunchedEffect(key1 = Unit) {
+        settingsViewModel.getUserTheme()
+    }
+
     LaunchedEffect(key1 = userTheme) {
         isDarkMode = when (userTheme) {
             UserTheme.Dark -> true
@@ -144,7 +148,6 @@ fun MainScreen(
     }
 
     LaunchedEffect(key1 = Unit) {
-        settingsViewModel.getUserTheme()
         if (isFirstLaunch) {
             scope.launch {
                 mainViewModel.getDisasterFilters()

@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-
             val settingsViewModel = hiltViewModel<SettingsViewModel>()
             val userTheme by settingsViewModel.userTheme.collectAsState()
 

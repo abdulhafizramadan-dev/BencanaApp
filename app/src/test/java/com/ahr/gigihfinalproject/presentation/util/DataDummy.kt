@@ -1,33 +1,15 @@
 package com.ahr.gigihfinalproject.presentation.util
 
+import com.ahr.gigihfinalproject.data.network.response.DisasterReportResponse
+import com.ahr.gigihfinalproject.data.network.response.DisasterResult
 import com.ahr.gigihfinalproject.domain.model.DisasterFilterTimePeriod
 import com.ahr.gigihfinalproject.domain.model.DisasterGeometry
 import com.ahr.gigihfinalproject.domain.model.DisasterProperties
 import com.ahr.gigihfinalproject.domain.model.DisasterType
 import com.ahr.gigihfinalproject.domain.model.Province
-import com.ahr.gigihfinalproject.presentation.main.DisasterGeometryState
-import com.ahr.gigihfinalproject.presentation.main.MainHeaderSectionState
-import com.ahr.gigihfinalproject.presentation.main.MainScreenUiState
 import com.ahr.gigihfinalproject.util.emptyString
 
 object DataDummy {
-    fun generateDummyMainScreenUiState(): MainScreenUiState {
-        return MainScreenUiState(
-            mainHeaderSectionState = MainHeaderSectionState.DEFAULT,
-            provinceSearchQuery = "Cari disini",
-            provinceSearchHint = "Cari disini",
-            selectedProvince = generateProvinces()[0],
-            selectedDisasterFilter = generateDisasterTypes()[0],
-            selectedDisasterTimePeriod = generateDisasterFilterTimePeriods()[0],
-            disasterGeometryState = DisasterGeometryState.Loading,
-            disasterFilters = emptyList(),
-            disasterFilterTimePeriods = emptyList(),
-            provinceList = emptyList(),
-            latestDisastersInformation = emptyList(),
-            isDisasterFilterTimePeriodShow = false
-        )
-    }
-
     fun generateDisasterTypes(): List<DisasterType> {
         return listOf(
             DisasterType("Banjir", "banjir"),
@@ -65,6 +47,15 @@ object DataDummy {
                     status = "confirmed"
                 )
             ),
+        )
+    }
+
+    fun generateDisasterReportResponse(): DisasterReportResponse {
+        return DisasterReportResponse(
+            statusCode = 200,
+            disasterResult = DisasterResult(
+                type = ""
+            )
         )
     }
 
