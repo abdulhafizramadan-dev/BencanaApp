@@ -71,4 +71,19 @@ MAPS_API_KEY={ADD_YOUR_API_KEY}
 ```
 
 ## Screenshots
-<img src="screenshots/home.jpg" width="25%"> <img src="screenshots/provinsi.jpg" width="25%">  <img src="screenshots/bottomsheet-full.jpg" width="25%">  <img src="screenshots/settings.jpg" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/e36f99f1-5be0-4510-8c4d-98e7f4d1f4e0" width="25%">
+### Light Mode
+<img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/c4ac3a51-9af8-4564-9514-d38608f73ef6" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/dfa9e05d-0e9e-4f90-a970-e0a76ba742fc" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/c12b3c7f-954f-4c8b-8f12-295ba0b57f79" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/1b1cfec7-c5af-4684-9ea1-d4f722a5cd66" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/0790acd9-6565-4e90-9f46-b88966676d13" width="25%">
+
+### Dark Mode
+<img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/0b7070e2-8f66-4bd8-9970-1ce7aa61d147" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/0d8bb3ae-2ecb-4f6f-8479-0cdf21d27db6" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/8ce3cce4-a817-45d3-baff-8767c5ca34c8" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/dc3a0df6-b12d-4399-a739-90c7e0ace3e6" width="25%"> <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/71337f69-f600-4af8-b8fe-affba07b1166" width="25%">
+
+# Testing Documentation
+
+This section provides documentation for the testing of the disaster reporting application.
+
+## UI Test/Instrumentation Test
+Memiliki kendala untuk menjalankan instrument test, tidak dapat membuat instrument test karena eksekusi waktu yang sangat lama
+<img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/c14c10ae-949f-4dfb-a1b2-4ad7f28b2d22" width="50%">
+
+## Unit Testing
+<img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/5e9fece2-f24f-4f94-a1e6-86144f51c5e5" width="50%">
