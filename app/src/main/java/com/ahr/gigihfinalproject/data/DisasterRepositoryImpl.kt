@@ -130,7 +130,7 @@ class DisasterRepositoryImpl @Inject constructor(
             emit(disasterFilterTimePeriod)
         }
 
-    override fun getTmaMonitoring(): Flow<Resource<List<TmaMonitoringGeometries>>> = flow<Resource<List<TmaMonitoringGeometries>>> {
+    override fun getTmaMonitoring(): Flow<Resource<List<TmaMonitoringGeometries>>> = flow {
         emit(Resource.Loading)
         val tmaMonitoringProperties = petaBencanaService.getTmaMonitoring().result?.objects?.output?.geometries
             ?.map { it.toDomains() } ?: emptyList()

@@ -128,8 +128,9 @@ private fun TextFieldAutoComplete(
                 Spacer(modifier = Modifier.width(8.dp))
             }
         },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.surface
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
         ),
         modifier = modifier
             .height(50.dp)
@@ -160,7 +161,7 @@ fun PreviewTextField() {
             }
             AutoCompleteTextField(
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = "Cari disini",
+                placeholder = stringResource(id = R.string.hint_search_here),
                 value = value,
                 onValueChanged = { value = it },
                 onClearClicked = { value = "" },

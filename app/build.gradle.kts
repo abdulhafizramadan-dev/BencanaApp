@@ -114,9 +114,6 @@ dependencies {
     implementation("androidx.room:room-ktx:2.5.2")
     kapt("androidx.room:room-compiler:2.5.2")
 
-    implementation("androidx.paging:paging-runtime:3.2.0")
-    implementation("androidx.paging:paging-compose:3.2.0")
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

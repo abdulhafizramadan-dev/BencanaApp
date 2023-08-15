@@ -259,7 +259,7 @@ fun DisasterListEmpty(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Tidak ada bencana yang ditemukan!",
+                text = stringResource(R.string.label_disaster_empty),
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )

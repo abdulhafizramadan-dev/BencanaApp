@@ -172,18 +172,6 @@ fun PreviewLatestDisasterItem() {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-//            LatestDisasterItem(
-//                disasterProperties = DisasterProperties(
-//                    "",
-//                    "earthquake",
-//                    "22",
-//                    "231",
-//                    "grasp",
-//                    "Trainer - Maulana Bahrul alam",
-//                    "confirmed"
-//                ),
-//                modifier = Modifier.padding(16.dp)
-//            )
             LatestDisasterLoadingItem(modifier = Modifier.padding(14.dp))
         }
     }
