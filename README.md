@@ -87,9 +87,7 @@ MAPS_API_KEY={ADD_YOUR_API_KEY}
 
 # Testing Documentation
 
-This section provides documentation for the testing of the disaster reporting application.
-
-## UI Test/Instrumentation Test
+## Instrumentation Test
 Saya memiliki kendala untuk menjalankan instrument test, waktu eksekusi yang sangat lama.
 
 <img src="https://github.com/GG-3-0-Mobile-Engineering/ME14-BencanaApp-GG3MEGP0532-Abdul-Hafiz-Ramadan/assets/111162360/c14c10ae-949f-4dfb-a1b2-4ad7f28b2d22" width="50%">
