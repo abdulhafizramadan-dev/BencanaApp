@@ -17,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ahr.gigihfinalproject.R
 import com.ahr.gigihfinalproject.domain.model.UserTheme
 import com.ahr.gigihfinalproject.ui.theme.GigihFinalProjectTheme
 import com.ahr.gigihfinalproject.util.emptyString
@@ -36,8 +38,8 @@ fun SettingsContent(
 
     val isDarkMode = userTheme == UserTheme.Dark
     val updateDarkMode: (Boolean) -> Unit = { state ->
-        val userTheme = if (state) UserTheme.Dark else UserTheme.Light
-        updateUserTheme(userTheme)
+        val userThemeState = if (state) UserTheme.Dark else UserTheme.Light
+        updateUserTheme(userThemeState)
     }
 
     Column(
@@ -45,18 +47,18 @@ fun SettingsContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         SettingItem(
-            title = "Dark Mode",
-            subtitle = "Aktifkan dark mode",
+            title = stringResource(R.string.label_dark_mode),
+            subtitle = stringResource(R.string.label_actived_dark_mode),
             state = isDarkMode,
             onStateChange = updateDarkMode,
-            semantic = "Checkbox dark mode"
+            semantic = stringResource(R.string.desc_checkbox_dark_mode)
         )
         SettingItem(
-            title = "Notifikasi",
-            subtitle = "Aktifkan notifikasi realtime untuk pemantuan tinggi air",
+            title = stringResource(R.string.label_notification),
+            subtitle = stringResource(R.string.label_enable_tma_monitoring_notification),
             state = userNotificationBaseWaterSetting,
             onStateChange = updateUserNotificationBaseWaterSetting,
-            semantic = "Checkbox notification"
+            semantic = stringResource(R.string.desc_checkbox_notification)
         )
     }
 }

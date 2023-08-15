@@ -127,4 +127,10 @@
     <string name="label_header_dialog_filter_disaster_timeperiod">Filter bencana berdasarkan periode waktu</string>
     <string name="content_tma_monitoring_format">Status %1$s pada tanggal %2$s di %3$s</string>
     <string name="label_disaster_empty">Tidak ada bencana yang ditemukan!</string>
+    <string name="label_dark_mode">Dark Mode</string>
+    <string name="label_actived_dark_mode">Aktifkan dark mode</string>
+    <string name="desc_checkbox_dark_mode">Checkbox dark mode</string>
+    <string name="label_notification">Notifikasi</string>
+    <string name="label_enable_tma_monitoring_notification">Aktifkan notifikasi realtime untuk pemantuan tinggi air</string>
+    <string name="desc_checkbox_notification">Checkbox notification</string>
 </resources>
