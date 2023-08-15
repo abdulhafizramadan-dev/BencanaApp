@@ -72,47 +72,46 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material2)
     implementation(libs.material3)
+    implementation(libs.material.icon.extended)
 
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.compose.destinations.core)
+    ksp(libs.compose.destinations.ksp)
 
-    implementation("io.github.raamcosta.compose-destinations:core:1.7.41-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.41-beta")
-
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Inject Dependency to WorkManager
-    implementation("androidx.hilt:hilt-work:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation(libs.hilt.work)
+    kapt(libs.hilt.compiler)
 
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.coil.compose)
 
-    implementation("com.google.android.gms:play-services-maps:18.1.0")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation("com.google.maps.android:maps-compose:2.11.5")
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.maps.compose)
 
-    implementation("com.google.accompanist:accompanist-permissions:0.31.5-beta")
+    implementation(libs.accompanist.permissions)
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.androidx.datastore.preferences)
 
-    implementation("com.valentinilk.shimmer:compose-shimmer:1.0.5")
+    implementation(libs.compose.shimmer)
 
-    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.0")
-    implementation("com.maxkeppeler.sheets-compose-dialogs:option:1.2.0")
+    implementation(libs.sheets.compose.dialogs.core)
+    implementation(libs.sheets.compose.dialogs.option)
 
-    implementation("com.airbnb.android:lottie-compose:6.1.0")
+    implementation(libs.lottie.compose)
 
-    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+    implementation (libs.androidx.work.runtime.ktx)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.2")
+    coreLibraryDesugaring(libs.desugar.jdk.libs.nio)
 
-    implementation("androidx.room:room-runtime:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
-    kapt("androidx.room:room-compiler:2.5.2")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
@@ -122,15 +121,15 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    testImplementation("org.mockito:mockito-core:5.4.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
 
     //special testing
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 
-    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
-    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
+    debugImplementation(libs.chucker)
+    releaseImplementation(libs.chucker.no.op)
 }
 
 kapt {
