@@ -17,6 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahr.gigihfinalproject.domain.model.UserTheme
@@ -46,13 +48,15 @@ fun SettingsContent(
             title = "Dark Mode",
             subtitle = "Aktifkan dark mode",
             state = isDarkMode,
-            onStateChange = updateDarkMode
+            onStateChange = updateDarkMode,
+            semantic = "Checkbox dark mode"
         )
         SettingItem(
             title = "Notifikasi",
             subtitle = "Aktifkan notifikasi realtime untuk pemantuan tinggi air",
             state = userNotificationBaseWaterSetting,
-            onStateChange = updateUserNotificationBaseWaterSetting
+            onStateChange = updateUserNotificationBaseWaterSetting,
+            semantic = "Checkbox notification"
         )
     }
 }
@@ -64,12 +68,17 @@ fun SettingItem(
     subtitle: String = emptyString(),
     state: Boolean = false,
     onStateChange: (Boolean) -> Unit = {},
+    semantic: String = emptyString()
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Switch(checked = state, onCheckedChange = onStateChange)
+        Switch(
+            checked = state,
+            onCheckedChange = onStateChange,
+            modifier = Modifier.semantics { contentDescription = semantic }
+        )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(text = title, style = MaterialTheme.typography.titleMedium)
