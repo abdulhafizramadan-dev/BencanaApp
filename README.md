@@ -26,6 +26,7 @@ Aplikasi bencana app memiliki fitur utama:
  - Instrument Testing ☑
 
 ## Upcoming Features
+ - Splash Screen 🚀
  - Modularization 🚀
  - Localization 🚀
  - Multiple support screen orientation 🚀
