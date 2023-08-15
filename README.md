@@ -23,6 +23,12 @@ Aplikasi bencana app memiliki fitur utama:
  - Mendukung animasi loading ✅
  - Offline mode support ✅
 
+## Upcoming Features
+ - Modularization 🚀
+ - Localization 🚀
+ - Multiple support screen orientation 🚀
+ - Complete unit testing 🚀
+ - Complete instrument testing 🚀
 
 ## Dependencies
 Aplikasi bencapa app dibangun menggunakan: 
