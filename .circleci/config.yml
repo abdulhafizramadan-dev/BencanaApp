@@ -5,7 +5,14 @@ orbs:
  
 jobs:
   build:
-    executor: android/android-machine
+    executor: 
+      name: android/android-machine
+      resource-class: large
+      tag: 2021.10.1
+    parameters:
+      executor:
+        description: Executor for the job
+        type: executor
     steps:
       - checkout
       - restore_cache:
@@ -35,3 +42,7 @@ jobs:
       - store_artifacts:  
           path: app/build/outputs/apk/debug/
           destination: artifact-file
+workflows:
+  test:
+    jobs:
+      - test
